@@ -53,3 +53,7 @@ export const deleteContactController = async (req, res) => {
 
   res.status(204).send();
 };
+
+export const upsertContactController = async (req, res) => {
+  const { contactId } = req.params;
+};

@@ -20,5 +20,13 @@ export const deleteContact = async (contactId) => {
     _id: contactId,
   });
 
+  export const updateContact = async (contactId, payload, options = {}) => {
+    const rawRes = await ContactsCollection.findOneAndUpdate({ _id: contactId }, payload, {
+      new: true,
+      includeResultMetadata: true,
+      ...options,
+    },);
+  };
+
   return contact;
 };
