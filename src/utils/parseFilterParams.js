@@ -1,5 +1,5 @@
-const parseContactType = (contactType) => {
-  const isString = typeof contactType === "string";
+const parseContactType = (type) => {
+  const isString = typeof type === "string";
   if (!isString) {
     return;
   }
@@ -7,29 +7,32 @@ const parseContactType = (contactType) => {
   const isContactType = (contactType) =>
     ["work", "personal", "home"].includes(contactType);
 
-  if (isContactType(contactType)) {
-    return contactType;
+  if (isContactType(type)) {
+    return type;
   }
 };
 
-const parseIsFavourite = (isFavourite) => {
-  const isString = typeof isFavourite === "string";
+const parseIsFavourite = (favourite) => {
+  const isString = typeof favourite === "string";
   if (!isString) {
     return;
   }
 
-  const parsedIsFavourite = isFavourite === "true";
-  return parsedIsFavourite;
+  const isFavourite = (favourite) => ["true", "false"].includes(favourite);
+
+  if (isFavourite(favourite)) {
+    return favourite;
+  }
 };
 
 export const parseFilterParams = (query) => {
-  const { contactType, isFavourite } = query;
+  const { type, isFavourite } = query;
 
-  const parsedContactType = parseContactType(contactType);
+  const parsedType = parseContactType(type);
   const parsedIsFavourite = parseIsFavourite(isFavourite);
 
   return {
-    contactType: parsedContactType,
+    type: parsedType,
     isFavourite: parsedIsFavourite,
   };
 };
