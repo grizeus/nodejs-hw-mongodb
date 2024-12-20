@@ -1,11 +1,12 @@
+import { CONTACT_TYPES } from "../constants/index.js";
+
 const parseContactType = (type) => {
   const isString = typeof type === "string";
   if (!isString) {
     return;
   }
 
-  const isContactType = (contactType) =>
-    ["work", "personal", "home"].includes(contactType);
+  const isContactType = (contactType) => CONTACT_TYPES.includes(contactType);
 
   if (isContactType(type)) {
     return type;
