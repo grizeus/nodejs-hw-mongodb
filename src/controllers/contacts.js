@@ -10,10 +10,11 @@ import {
 import { parsePaginationParams } from "../utils/parsePaginationParams.js";
 import { parseSortParams } from "../utils/parseSortParams.js";
 import { parseFilterParams } from "../utils/parseFilterParams.js";
+import { CONTACT_KEYS } from "../db/models/contacts.js";
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
-  const { sortBy, sortOrder } = parseSortParams(req.query);
+  const { sortBy, sortOrder } = parseSortParams(req.query, CONTACT_KEYS);
   const filter = parseFilterParams(req.query);
 
   const contacts = await getAllContacts({

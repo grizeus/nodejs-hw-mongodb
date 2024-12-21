@@ -32,4 +32,6 @@ const contactSchema = new Schema(
   },
 );
 
+export const CONTACT_KEYS = Object.keys(contactSchema.paths);
+
 export const ContactsCollection = model("contact", contactSchema);
