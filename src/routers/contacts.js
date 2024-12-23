@@ -41,6 +41,7 @@ router.delete(
 router.put(
   "/contacts/:contactId",
   isValidId,
+  validateBody(createContactSchema),
   ctrlWrapper(upsertContactController),
 );
 
