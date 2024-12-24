@@ -1,5 +1,8 @@
 import { Schema, model } from "mongoose";
 
+import { handleSaveErr, setUpdateSettings } from "./hooks.js";
+import { emailRegExp } from "../../constants/index.js";
+
 const usersSchema = new Schema(
   {
     name: {
@@ -8,11 +11,13 @@ const usersSchema = new Schema(
     },
     email: {
       type: String,
+      match: emailRegExp,
       required: true,
       unique: true,
     },
     password: {
       type: String,
+      minlength: 8,
       required: true,
     },
   },
@@ -23,5 +28,9 @@ const usersSchema = new Schema(
 );
 
 export const USER_KEYS = Object.keys(usersSchema.paths);
+
+usersSchema.post("save", handleSaveErr);
+usersSchema.pre("findOneAndUpdate", setUpdateSettings);
+usersSchema.post("findOneAndUpdate", handleSaveErr);
 
 export const UsersCollection = model("user", usersSchema);
