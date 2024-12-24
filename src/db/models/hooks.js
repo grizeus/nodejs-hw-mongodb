@@ -1,5 +1,5 @@
 export const handleSaveErr = (err, doc, next) => {
-  err.status = 420;
+  err.status = 400;
   next();
 };
 
