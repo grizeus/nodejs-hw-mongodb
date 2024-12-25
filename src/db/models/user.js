@@ -26,7 +26,7 @@ const usersSchema = new Schema(
   },
 );
 
-export const USER_KEYS = Object.keys(usersSchema.paths);
+export const USER_KEYS = Object.keys(usersSchema.paths); // NOTE: leave for now
 
 usersSchema.post("save", handleSaveErr);
 usersSchema.pre("findOneAndUpdate", setUpdateSettings);
