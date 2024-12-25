@@ -14,12 +14,12 @@ export const loginController = async (req, res) => {
 
   res.cookie("refreshToken", session.refreshToken, {
     httpOnly: true,
-    expires: session.refreshTokenValidUntil,
+    expires: new Date(Date.now() + session.refreshTokenValidUntil),
   });
 
   res.cookie("sessionId", session._id, {
     httpOnly: true,
-    expires: session.refreshTokenValidUntil,
+    expires: new Date(Date.now() + session.refreshTokenValidUntil),
   });
 
   res.json({

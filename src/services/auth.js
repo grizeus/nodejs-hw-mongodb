@@ -14,7 +14,7 @@ export const registerUser = async (payload) => {
   const user = await UsersCollection.findOne({ email });
 
   if (user) {
-    throw createHttpError(409, "User already exist");
+    throw createHttpError(409, "User with this email already exist");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -33,8 +33,8 @@ export const loginUser = async ({ email, password }) => {
     throw createHttpError(401, "Email or password invalid");
   }
 
-  const passwordCompare = await bcrypt.compare(password, user.password);
-  if (!passwordCompare) {
+  const isEqual = await bcrypt.compare(password, user.password);
+  if (!isEqual) {
     throw createHttpError(401, "Email or password invalid");
   }
 
