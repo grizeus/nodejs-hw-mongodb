@@ -14,12 +14,12 @@ export const loginController = async (req, res) => {
 
   res.cookie("refreshToken", session.refreshToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + session.refreshTokenValidUntil),
+    expires: session.refreshTokenValidUntil,
   });
 
   res.cookie("sessionId", session._id, {
     httpOnly: true,
-    expires: new Date(Date.now() + session.refreshTokenValidUntil),
+    expires: session.refreshTokenValidUntil,
   });
 
   res.json({
@@ -30,6 +30,7 @@ export const loginController = async (req, res) => {
     },
   });
 };
+
 export const logoutController = async (req, res) => {
   if (req.cookies.sessionId) {
     await logoutUser(req.cookies.sessionId);
