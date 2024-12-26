@@ -14,7 +14,7 @@ export const registerUser = async (payload) => {
   const user = await UsersCollection.findOne({ email });
 
   if (user) {
-    throw createHttpError(409, "User with this email already exist");
+    throw createHttpError(409, "Email in use");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
