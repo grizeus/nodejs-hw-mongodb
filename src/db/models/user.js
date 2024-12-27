@@ -26,6 +26,12 @@ const usersSchema = new Schema(
   },
 );
 
+usersSchema.methods.toJSON = function() {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
+
 export const USER_KEYS = Object.keys(usersSchema.paths); // NOTE: leave for now
 
 usersSchema.post("save", handleSaveErr);
