@@ -7,7 +7,6 @@ import {
 
 export const registerController = async (req, res) => {
   const user = await registerUser(req.body);
-  console.log(user);
 
   res.status(201).json({
     status: 201,
