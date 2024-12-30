@@ -20,3 +20,7 @@ export const sessionSchema = Joi.object({
   accessTokenValidUntil: Joi.date().required(),
   refreshTokenValidUntil: Joi.date().required(),
 });
+
+export const requestResetEmailSchema = Joi.object({
+  email: Joi.string().pattern(emailRegExp).required(),
+});

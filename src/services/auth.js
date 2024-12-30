@@ -1,7 +1,11 @@
 import createHttpError from "http-errors";
 import bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
+import jwt from "jsonwebtoken";
 
+import { SMTP } from "../constants/index.js";
+import getEnv from "../utils/getEnvVar.js";
+import { sendEmail } from "../utils/sendMail.js";
 import { UsersCollection } from "../db/models/user.js";
 import { SessionCollection } from "../db/models/session.js";
 import {
@@ -99,4 +103,29 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
 };
 
 export const getSession = (filter) => SessionCollection.findOne(filter);
-export const getUser= (filter) => UsersCollection.findOne(filter);
+export const getUser = (filter) => UsersCollection.findOne(filter);
+
+export const requestResetToken = async (email) => {
+  const user = getUser({ email });
+
+  if (!user) {
+    throw createHttpError(404, "User not found");
+  }
+  const resetToken = jwt.sign(
+    {
+      sub: user._id,
+      email,
+    },
+    getEnv("JWT_SECRET"),
+    {
+      expiresIn: "15m",
+    },
+  );
+
+  await sendEmail({
+    from: getEnv(SMTP.SMTP_FROM),
+    to: email,
+    subject: "Reset your password",
+    html: `<p>Click <a href="${resetToken}">here</a> to reset your password!</p>`,
+  });
+};
