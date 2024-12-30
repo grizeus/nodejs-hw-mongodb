@@ -1,3 +1,5 @@
+import path from "node:path";
+
 export const SORT_ORDER = ["asc", "desc"];
 
 export const CONTACT_TYPES = ["work", "personal", "home"];
@@ -16,3 +18,5 @@ export const SMTP = {
   SMTP_PASSWORD: "SMTP_PASSWORD",
   SMTP_FROM: "SMTP_FROM",
 };
+
+export const TEMPALTES_DIR = path.join(process.cwd(), "src", "templates");
