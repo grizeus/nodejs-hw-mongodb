@@ -108,7 +108,8 @@ export const getSession = (filter) => SessionCollection.findOne(filter);
 export const getUser = (filter) => UsersCollection.findOne(filter);
 
 export const requestResetToken = async (email) => {
-  const user = getUser({ email });
+  const user = await getUser({ email });
+  console.log(user.name);
 
   if (!user) {
     throw createHttpError(404, "User not found");
