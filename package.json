@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint src/**/*.js",
     "start": "node ./src/index.js",
-    "dev": "nodemon ./src/index.js"
+    "dev": "nodemon ./src/index.js",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -17,9 +18,12 @@
     "eslint": "^9.16.0",
     "globals": "^15.13.0",
     "nodemon": "^3.1.7",
-    "pino-pretty": "^13.0.0"
+    "pino-pretty": "^13.0.0",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.1",

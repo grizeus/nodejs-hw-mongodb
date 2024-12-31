@@ -25,9 +25,15 @@ export const getAllContacts = async ({
   if (filter.name) {
     contactsQuery.where("name").regex(new RegExp(filter.name, "i"));
   }
-  
+
+  if (filter.userId) {
+    contactsQuery.where("userId").equals(filter.userId);
+  }
+
   const [contactsCount, contacts] = await Promise.all([
-    ContactsCollection.find().merge(contactsQuery).countDocuments(),
+    ContactsCollection.find({ userId: filter.userId })
+      .merge(contactsQuery)
+      .countDocuments(),
     contactsQuery
       .skip(skip)
       .limit(limit)
@@ -43,41 +49,26 @@ export const getAllContacts = async ({
   };
 };
 
-export const getContactById = async (id) => {
-  const contact = await ContactsCollection.findById(id);
-  return contact;
-};
+export const getContactById = (filter) => ContactsCollection.findOne(filter);
 
-export const createContact = async (payload) => {
-  const contact = await ContactsCollection.create(payload);
-  return contact;
-};
+export const createContact = (payload) => ContactsCollection.create(payload);
 
-export const deleteContact = async (contactId) => {
-  const contact = await ContactsCollection.findOneAndDelete({
-    _id: contactId,
+export const deleteContact = (filter) =>
+  ContactsCollection.findOneAndDelete(filter);
+
+export const updateContact = async (filter, payload, options = {}) => {
+  const rawRes = await ContactsCollection.findOneAndUpdate(filter, payload, {
+    new: true,
+    includeResultMetadata: true,
+    ...options,
   });
-
-  return contact;
-};
-
-export const updateContact = async (contactId, payload, options = {}) => {
-  const rawRes = await ContactsCollection.findOneAndUpdate(
-    { _id: contactId },
-    payload,
-    {
-      new: true,
-      includeResultMetadata: true,
-      ...options,
-    },
-  );
 
   if (!rawRes || !rawRes.value) {
     return null;
   }
 
   return {
-    contact: rawRes.value,
+    data: rawRes.value,
     isNew: Boolean(rawRes?.lastErrorObject?.upserted),
   };
 };
