@@ -17,7 +17,6 @@ export const sendEmail = async (options) => {
   try {
     return await transporter.sendMail(options);
   } catch (err) {
-    console.error("Error sending email:", err);
 
     if (err instanceof Error) {
       throw new createHttpError(

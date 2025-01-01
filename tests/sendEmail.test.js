@@ -59,7 +59,7 @@ describe("sendEmail function", () => {
   });
 
   it("should reject if transporter.sendMail throws an error", async () => {
-    const mockError = new Error("Failed to send email");
+    const mockError = new Error("Failed to send the email, please try again later.");
     nodemailer.createTransport().sendMail.mockRejectedValue(mockError);
 
     await expect(sendEmail({})).rejects.toThrow(mockError);
