@@ -29,13 +29,13 @@ router.post("/logout", ctrlWrapper(controller.logoutController));
 router.post("/refresh", ctrlWrapper(controller.refreshUserSessionController));
 
 router.post(
-  "/request-reset-email",
+  "/send-reset-email",
   validateBody(requestResetEmailSchema),
   ctrlWrapper(controller.requestResetEmailController),
 );
 
 router.post(
-  "/reset-password",
+  "/reset-pwd",
   validateBody(resetPasswordSchema),
   ctrlWrapper(controller.resetPasswordController),
 );
