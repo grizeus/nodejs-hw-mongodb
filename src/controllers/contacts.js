@@ -12,6 +12,8 @@ import { parseSortParams } from "../utils/parseSortParams.js";
 import { parseFilterParams } from "../utils/parseFilterParams.js";
 import { CONTACT_KEYS } from "../db/models/contacts.js";
 import { saveFileToUploadDir } from "../utils/saveFileToUploadDir.js";
+import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js";
+import getEnv from "../utils/getEnvVar.js";
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -103,7 +105,11 @@ export const patchContactController = async (req, res) => {
 
   let photoUrl;
   if (photo) {
-    photoUrl = await saveFileToUploadDir(photo);
+    if (getEnv("ENABLE_CLOUDINARY") === "true") {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
   }
 
   const result = await updateContact(
