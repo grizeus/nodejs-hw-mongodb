@@ -68,13 +68,13 @@ describe("refreshUsersSession", () => {
     };
     SessionCollection.findOne = vi.fn().mockResolvedValue(validSession);
     SessionCollection.deleteOne = vi.fn().mockResolvedValue({});
-      SessionCollection.create = vi.fn().mockResolvedValue({
-        userId: "userId",
-        accessToken: "randomString",
-        refreshToken: "randomString",
-        accessTokenValidUntil: Date.now() + 1000,
-        refreshTokenValidUntil: Date.now() + 1000,
-      });
+    SessionCollection.create = vi.fn().mockResolvedValue({
+      userId: "userId",
+      accessToken: "randomString",
+      refreshToken: "randomString",
+      accessTokenValidUntil: Date.now() + 1000,
+      refreshTokenValidUntil: Date.now() + 1000,
+    });
 
     const result = await refreshUsersSession({
       sessionId: "validId",
