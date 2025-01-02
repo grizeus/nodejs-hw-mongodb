@@ -35,6 +35,18 @@ export const getContactsController = async (req, res) => {
   });
 };
 
+const savePhotoHandler = async (photo) => {
+  let photoUrl;
+  if (photo) {
+    if (getEnv("ENABLE_CLOUDINARY") === "true") {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+  return photoUrl;
+};
+
 export const getContactByIdController = async (req, res) => {
   const { contactId: _id } = req.params;
   const userId = req.user._id;
@@ -53,7 +65,11 @@ export const getContactByIdController = async (req, res) => {
 
 export const createContactController = async (req, res) => {
   const userId = req.user._id;
-  const contact = await createContact({ userId, ...req.body });
+  const photo = req.file;
+
+  const photoUrl = await savePhotoHandler(photo);
+
+  const contact = await createContact({ userId, ...req.body, photo: photoUrl });
 
   res.status(201).json({
     status: 201,
@@ -75,11 +91,15 @@ export const deleteContactController = async (req, res) => {
 };
 
 export const upsertContactController = async (req, res) => {
-  const { id } = req.params;
+  const { contactId: _id } = req.params;
   const userId = req.user._id;
+  const photo = req.file;
+
+  const photoUrl = await savePhotoHandler(photo);
+
   const { isNew, data } = await updateContact(
-    id,
-    { userId, ...req.body },
+    { _id, userId },
+    { ...req.body, photo: photoUrl },
     {
       upsert: true,
     },
@@ -103,27 +123,20 @@ export const patchContactController = async (req, res) => {
   const userId = req.user._id;
   const photo = req.file;
 
-  let photoUrl;
-  if (photo) {
-    if (getEnv("ENABLE_CLOUDINARY") === "true") {
-      photoUrl = await saveFileToCloudinary(photo);
-    } else {
-      photoUrl = await saveFileToUploadDir(photo);
-    }
-  }
+  const photoUrl = await savePhotoHandler(photo);
 
-  const result = await updateContact(
+  const { data } = await updateContact(
     { _id, userId },
     { ...req.body, photo: photoUrl },
   );
 
-  if (!result) {
+  if (!data) {
     throw createHttpError(404, "Contact not found");
   }
 
   res.status(200).json({
     status: 200,
     message: "Successfully patched a contact!",
-    data: result.data,
+    data,
   });
 };
