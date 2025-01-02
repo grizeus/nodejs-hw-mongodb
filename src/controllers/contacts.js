@@ -35,6 +35,18 @@ export const getContactsController = async (req, res) => {
   });
 };
 
+const savePhotoHandler = async (photo) => {
+  let photoUrl;
+  if (photo) {
+    if (getEnv("ENABLE_CLOUDINARY") === "true") {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+  return photoUrl;
+};
+
 export const getContactByIdController = async (req, res) => {
   const { contactId: _id } = req.params;
   const userId = req.user._id;
@@ -55,14 +67,7 @@ export const createContactController = async (req, res) => {
   const userId = req.user._id;
   const photo = req.file;
 
-  let photoUrl;
-  if (photo) {
-    if (getEnv("ENABLE_CLOUDINARY") === "true") {
-      photoUrl = await saveFileToCloudinary(photo);
-    } else {
-      photoUrl = await saveFileToUploadDir(photo);
-    }
-  }
+  const photoUrl = await savePhotoHandler(photo);
 
   const contact = await createContact({ userId, ...req.body, photo: photoUrl });
 
@@ -90,17 +95,10 @@ export const upsertContactController = async (req, res) => {
   const userId = req.user._id;
   const photo = req.file;
 
-  let photoUrl;
-  if (photo) {
-    if (getEnv("ENABLE_CLOUDINARY") === "true") {
-      photoUrl = await saveFileToCloudinary(photo);
-    } else {
-      photoUrl = await saveFileToUploadDir(photo);
-    }
-  }
+  const photoUrl = await savePhotoHandler(photo);
 
   const { isNew, data } = await updateContact(
-    {_id, userId},
+    { _id, userId },
     { ...req.body, photo: photoUrl },
     {
       upsert: true,
@@ -125,14 +123,7 @@ export const patchContactController = async (req, res) => {
   const userId = req.user._id;
   const photo = req.file;
 
-  let photoUrl;
-  if (photo) {
-    if (getEnv("ENABLE_CLOUDINARY") === "true") {
-      photoUrl = await saveFileToCloudinary(photo);
-    } else {
-      photoUrl = await saveFileToUploadDir(photo);
-    }
-  }
+  const photoUrl = await savePhotoHandler(photo);
 
   const { data } = await updateContact(
     { _id, userId },
