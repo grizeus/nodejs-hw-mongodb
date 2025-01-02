@@ -86,7 +86,7 @@ export const deleteContactController = async (req, res) => {
 };
 
 export const upsertContactController = async (req, res) => {
-  const { id } = req.params;
+  const { contactId: _id } = req.params;
   const userId = req.user._id;
   const photo = req.file;
 
@@ -100,7 +100,7 @@ export const upsertContactController = async (req, res) => {
   }
 
   const { isNew, data } = await updateContact(
-    {id, userId},
+    {_id, userId},
     { ...req.body, photo: photoUrl },
     {
       upsert: true,
