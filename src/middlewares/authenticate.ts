@@ -1,6 +1,6 @@
 import createHttpError from "http-errors";
 
-import { getSession, getUser } from "../services/auth.js";
+import { getSession, getUser } from "../services/auth.ts";
 
 export const authenticate = async (req, res, next) => {
   const authHeader = req.get("Authorization");
@@ -21,7 +21,8 @@ export const authenticate = async (req, res, next) => {
     return;
   }
 
-  const isAccessTokenExpired = new Date() > new Date(session.accessTokenValidUntil);
+  const isAccessTokenExpired =
+    new Date() > new Date(session.accessTokenValidUntil);
   if (isAccessTokenExpired) {
     next(createHttpError(401, "Access token expired"));
     return;

@@ -1,11 +1,12 @@
-import { Schema, model } from "mongoose";
+import { Types, Schema, model } from "mongoose";
 
 import { handleSaveErr, setUpdateSettings } from "./hooks.js";
+import type { Session } from "../../types/types.d.ts";
 
-const sessionSchema = new Schema(
+const sessionSchema = new Schema<Session>(
   {
     userId: {
-      type: Schema.Types.ObjectId,
+      type: Types.ObjectId,
       ref: "users",
       required: true,
     },
@@ -32,8 +33,8 @@ const sessionSchema = new Schema(
   },
 );
 
-sessionSchema.post("save", handleSaveErr);
-sessionSchema.pre("findOneAndUpdate", setUpdateSettings);
-sessionSchema.post("findOneAndUpdate", handleSaveErr);
+sessionSchema.post<Session>("save", handleSaveErr);
+sessionSchema.pre<Session>("findOneAndUpdate", setUpdateSettings);
+sessionSchema.post<Session>("findOneAndUpdate", handleSaveErr);
 
-export const SessionCollection = model("session", sessionSchema);
+export const SessionCollection = model<Session>("session", sessionSchema);

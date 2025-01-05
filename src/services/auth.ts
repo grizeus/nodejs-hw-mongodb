@@ -12,7 +12,9 @@ import { UsersCollection } from "../db/models/user.js";
 import { SessionCollection } from "../db/models/session.js";
 import {
   refreshTokenLifetime,
-  accessTokenLifetime, SMTP, TEMPALTES_DIR
+  accessTokenLifetime,
+  SMTP,
+  TEMPALTES_DIR,
 } from "../constants/index.js";
 
 export const registerUser = async (payload) => {
@@ -32,7 +34,13 @@ export const registerUser = async (payload) => {
   return newUser;
 };
 
-export const loginUser = async ({ email, password }) => {
+export const loginUser = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
   const user = await UsersCollection.findOne({ email });
 
   if (!user) {
@@ -124,7 +132,10 @@ export const requestResetToken = async (email) => {
     },
   );
 
-  const resetPassTemplatePath = path.join(TEMPALTES_DIR, "reset-password-email.html");
+  const resetPassTemplatePath = path.join(
+    TEMPALTES_DIR,
+    "reset-password-email.html",
+  );
 
   const templateSource = (await fs.readFile(resetPassTemplatePath)).toString();
   const template = handlebars.compile(templateSource);
@@ -137,7 +148,7 @@ export const requestResetToken = async (email) => {
     from: getEnv(SMTP.SMTP_FROM),
     to: email,
     subject: "Reset your password",
-    html
+    html,
   });
 };
 

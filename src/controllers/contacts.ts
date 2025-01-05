@@ -1,4 +1,5 @@
 import createHttpError from "http-errors";
+import { Response } from "express";
 
 import {
   createContact,
@@ -13,13 +14,17 @@ import { parseFilterParams } from "../utils/parseFilterParams.js";
 import { CONTACT_KEYS } from "../db/models/contacts.js";
 import { saveFileToUploadDir } from "../utils/saveFileToUploadDir.js";
 import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js";
-import getEnv from "../utils/getEnvVar.js";
+import { getEnvVar } from "../utils/getEnvVar.js";
+import type { FilterParams, TypedRequest, User } from "../types/types.d.ts";
 
-export const getContactsController = async (req, res) => {
+export const getContactsController = async (
+  req: TypedRequest<{ user: User }>,
+  res: Response,
+) => {
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query, CONTACT_KEYS);
-  const filter = parseFilterParams(req.query);
-  filter.userId = req.user._id;
+  const filter: FilterParams = parseFilterParams(req.query);
+  filter.userId = req.body.user._id;
 
   const contacts = await getAllContacts({
     page,
@@ -35,10 +40,10 @@ export const getContactsController = async (req, res) => {
   });
 };
 
-const savePhotoHandler = async (photo) => {
+const savePhotoHandler = async (photo: string) => {
   let photoUrl;
   if (photo) {
-    if (getEnv("ENABLE_CLOUDINARY") === "true") {
+    if (getEnvVar("ENABLE_CLOUDINARY") === "true") {
       photoUrl = await saveFileToCloudinary(photo);
     } else {
       photoUrl = await saveFileToUploadDir(photo);
@@ -47,11 +52,13 @@ const savePhotoHandler = async (photo) => {
   return photoUrl;
 };
 
-export const getContactByIdController = async (req, res) => {
+export const getContactByIdController = async (
+  req: TypedRequest<{ user: User }>,
+  res: Response,
+) => {
   const { contactId: _id } = req.params;
-  const userId = req.user._id;
+  const userId = req.body.user._id;
   const contact = await getContactById({ _id, userId });
-
 
   if (!contact) {
     throw createHttpError(404, `Contact with id ${_id} not found`);
@@ -64,9 +71,12 @@ export const getContactByIdController = async (req, res) => {
   });
 };
 
-export const createContactController = async (req, res) => {
-  const userId = req.user._id;
-  const photo = req.file;
+export const createContactController = async (
+  req: TypedRequest<{ user: User; file: string }>,
+  res: Response,
+) => {
+  const userId = req.body.user._id;
+  const photo = req.body.file;
 
   const photoUrl = await savePhotoHandler(photo);
 
@@ -79,9 +89,12 @@ export const createContactController = async (req, res) => {
   });
 };
 
-export const deleteContactController = async (req, res) => {
+export const deleteContactController = async (
+  req: TypedRequest<{ user: User }>,
+  res: Response,
+) => {
   const { contactId: _id } = req.params;
-  const userId = req.user._id;
+  const userId = req.body.user._id;
   const contact = await deleteContact({ _id, userId });
 
   if (!contact) {
@@ -91,10 +104,13 @@ export const deleteContactController = async (req, res) => {
   res.status(204).send();
 };
 
-export const upsertContactController = async (req, res) => {
+export const upsertContactController = async (
+  req: TypedRequest<{ user: User; file: string }>,
+  res: Response,
+) => {
   const { contactId: _id } = req.params;
-  const userId = req.user._id;
-  const photo = req.file;
+  const userId = req.body.user._id;
+  const photo = req.body.file;
 
   const photoUrl = await savePhotoHandler(photo);
 
@@ -107,7 +123,6 @@ export const upsertContactController = async (req, res) => {
   );
 
   if (!data) {
-
     throw createHttpError(404, "Contact not found");
   }
 
@@ -120,10 +135,13 @@ export const upsertContactController = async (req, res) => {
   });
 };
 
-export const patchContactController = async (req, res) => {
+export const patchContactController = async (
+  req: TypedRequest<{ user: User; file: string }>,
+  res: Response,
+) => {
   const { contactId: _id } = req.params;
-  const userId = req.user._id;
-  const photo = req.file;
+  const userId = req.body.user._id;
+  const photo = req.body.file;
 
   const photoUrl = await savePhotoHandler(photo);
 

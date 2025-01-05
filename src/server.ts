@@ -3,13 +3,13 @@ import cors from "cors";
 import pino from "pino-http";
 import cookieParser from "cookie-parser";
 
-import router from "./routers/index.js";
-import  getEnv  from "./utils/getEnvVar.js";
-import { errorHandler } from "./middlewares/errorHandler.js";
-import { notFoundHandler } from "./middlewares/notFoundHandler.js";
-import { UPLOAD_DIR } from "./constants/index.js";
+import router from "./routers/index";
+import getEnv from "./utils/getEnvVar";
+import { errorHandler } from "./middlewares/errorHandler";
+import { notFoundHandler } from "./middlewares/notFoundHandler";
+import { UPLOAD_DIR } from "./constants/index";
 
-const PORT = Number(getEnv("PORT", 3000));
+const PORT = Number(getEnv("PORT", "3000"));
 
 export const setupServer = () => {
   const app = express();

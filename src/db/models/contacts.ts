@@ -1,8 +1,9 @@
-import { Schema, model } from "mongoose";
+import { Types, Schema, model } from "mongoose";
 import { CONTACT_TYPES } from "../../constants/index.js";
 import { handleSaveErr, setUpdateSettings } from "./hooks.js";
+import type { Contact } from "../../types/types.d.ts";
 
-const contactSchema = new Schema(
+const contactSchema = new Schema<Contact>(
   {
     name: {
       type: String,
@@ -27,7 +28,7 @@ const contactSchema = new Schema(
       required: true,
     },
     userId: {
-      type: Schema.Types.ObjectId,
+      type: Types.ObjectId,
       ref: "users",
       required: true,
     },
@@ -43,8 +44,8 @@ const contactSchema = new Schema(
 
 export const CONTACT_KEYS = Object.keys(contactSchema.paths);
 
-contactSchema.post("save", handleSaveErr);
-contactSchema.pre("findOneAndUpdate", setUpdateSettings);
-contactSchema.post("findOneAndUpdate", handleSaveErr);
+contactSchema.post<Contact>("save", handleSaveErr);
+contactSchema.pre<Contact>("findOneAndUpdate", setUpdateSettings);
+contactSchema.post<Contact>("findOneAndUpdate", handleSaveErr);
 
-export const ContactsCollection = model("contact", contactSchema);
+export const ContactsCollection = model<Contact>("contact", contactSchema);
