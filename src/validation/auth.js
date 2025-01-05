@@ -20,3 +20,12 @@ export const sessionSchema = Joi.object({
   accessTokenValidUntil: Joi.date().required(),
   refreshTokenValidUntil: Joi.date().required(),
 });
+
+export const requestResetEmailSchema = Joi.object({
+  email: Joi.string().pattern(emailRegExp).required(),
+});
+
+export const resetPasswordSchema = Joi.object({
+  password: Joi.string().required(),
+  token: Joi.string().required(),
+});
