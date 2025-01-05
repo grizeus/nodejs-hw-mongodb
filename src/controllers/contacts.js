@@ -52,6 +52,7 @@ export const getContactByIdController = async (req, res) => {
   const userId = req.user._id;
   const contact = await getContactById({ _id, userId });
 
+
   if (!contact) {
     throw createHttpError(404, `Contact with id ${_id} not found`);
   }
@@ -106,6 +107,7 @@ export const upsertContactController = async (req, res) => {
   );
 
   if (!data) {
+
     throw createHttpError(404, "Contact not found");
   }
 

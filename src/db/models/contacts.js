@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-
 import { CONTACT_TYPES } from "../../constants/index.js";
 import { handleSaveErr, setUpdateSettings } from "./hooks.js";
 
