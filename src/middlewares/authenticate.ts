@@ -1,8 +1,14 @@
 import createHttpError from "http-errors";
+import { Response, NextFunction } from "express";
 
-import { getSession, getUser } from "../services/auth.ts";
+import { getSession, getUser } from "../services/auth.js";
+import { ExpandedRequest } from "../types/types.js";
 
-export const authenticate = async (req, res, next) => {
+export const authenticate = async (
+  req: ExpandedRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   const authHeader = req.get("Authorization");
   if (!authHeader) {
     next(createHttpError(401, "Please provide Authorization header"));

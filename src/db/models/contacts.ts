@@ -1,4 +1,4 @@
-import { Types, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { CONTACT_TYPES } from "../../constants/index.js";
 import { handleSaveErr, setUpdateSettings } from "./hooks.js";
 import type { Contact } from "../../types/types.d.ts";
@@ -28,7 +28,7 @@ const contactSchema = new Schema<Contact>(
       required: true,
     },
     userId: {
-      type: Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "users",
       required: true,
     },

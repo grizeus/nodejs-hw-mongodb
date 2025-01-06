@@ -15,10 +15,10 @@ import { CONTACT_KEYS } from "../db/models/contacts.js";
 import { saveFileToUploadDir } from "../utils/saveFileToUploadDir.js";
 import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js";
 import { getEnvVar } from "../utils/getEnvVar.js";
-import type { FilterParams, TypedRequest, User } from "../types/types.d.ts";
+import type { FilterParams, ExpandedRequest } from "../types/types.d.ts";
 
 export const getContactsController = async (
-  req: TypedRequest<{ user: User }>,
+  req: ExpandedRequest,
   res: Response,
 ) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -29,8 +29,8 @@ export const getContactsController = async (
   const contacts = await getAllContacts({
     page,
     perPage,
-    sortBy,
-    sortOrder,
+    sortBy: "_id",
+    sortOrder: "asc",
     filter,
   });
   res.status(200).json({
@@ -40,7 +40,7 @@ export const getContactsController = async (
   });
 };
 
-const savePhotoHandler = async (photo: string) => {
+const savePhotoHandler = async (photo: string | undefined) => {
   let photoUrl;
   if (photo) {
     if (getEnvVar("ENABLE_CLOUDINARY") === "true") {
@@ -53,11 +53,11 @@ const savePhotoHandler = async (photo: string) => {
 };
 
 export const getContactByIdController = async (
-  req: TypedRequest<{ user: User }>,
+  req: ExpandedRequest,
   res: Response,
 ) => {
   const { contactId: _id } = req.params;
-  const userId = req.body.user._id;
+  const userId = req.user._id;
   const contact = await getContactById({ _id, userId });
 
   if (!contact) {
@@ -72,12 +72,11 @@ export const getContactByIdController = async (
 };
 
 export const createContactController = async (
-  req: TypedRequest<{ user: User; file: string }>,
+  req: ExpandedRequest,
   res: Response,
 ) => {
-  const userId = req.body.user._id;
-  const photo = req.body.file;
-
+  const userId = req.user?._id;
+  const photo = req.file;
   const photoUrl = await savePhotoHandler(photo);
 
   const contact = await createContact({ userId, ...req.body, photo: photoUrl });
@@ -90,11 +89,11 @@ export const createContactController = async (
 };
 
 export const deleteContactController = async (
-  req: TypedRequest<{ user: User }>,
+  req: ExpandedRequest,
   res: Response,
 ) => {
   const { contactId: _id } = req.params;
-  const userId = req.body.user._id;
+  const userId = req.user._id;
   const contact = await deleteContact({ _id, userId });
 
   if (!contact) {
@@ -105,16 +104,16 @@ export const deleteContactController = async (
 };
 
 export const upsertContactController = async (
-  req: TypedRequest<{ user: User; file: string }>,
+  req: ExpandedRequest,
   res: Response,
 ) => {
   const { contactId: _id } = req.params;
-  const userId = req.body.user._id;
-  const photo = req.body.file;
+  const userId = req.user._id;
+  const photo = req.file;
 
   const photoUrl = await savePhotoHandler(photo);
 
-  const { isNew, data } = await updateContact(
+  const result = await updateContact(
     { _id, userId },
     { ...req.body, photo: photoUrl },
     {
@@ -122,9 +121,11 @@ export const upsertContactController = async (
     },
   );
 
-  if (!data) {
+  if (result === null) {
     throw createHttpError(404, "Contact not found");
   }
+
+  const { isNew, data } = result;
 
   const status = isNew ? 201 : 200;
 
@@ -136,23 +137,25 @@ export const upsertContactController = async (
 };
 
 export const patchContactController = async (
-  req: TypedRequest<{ user: User; file: string }>,
+  req: ExpandedRequest,
   res: Response,
 ) => {
   const { contactId: _id } = req.params;
-  const userId = req.body.user._id;
-  const photo = req.body.file;
+  const userId = req.user._id;
+  const photo = req.file;
 
   const photoUrl = await savePhotoHandler(photo);
 
-  const { data } = await updateContact(
+  const result = await updateContact(
     { _id, userId },
     { ...req.body, photo: photoUrl },
   );
 
-  if (!data) {
+  if (result === null) {
     throw createHttpError(404, "Contact not found");
   }
+
+  const { data } = result;
 
   res.status(200).json({
     status: 200,

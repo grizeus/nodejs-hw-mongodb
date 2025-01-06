@@ -1,5 +1,6 @@
 import { Request } from "express";
 import { Query } from "express-serve-static-core";
+import { Types } from "mongoose";
 
 export type Session = {
   _id: Types.ObjectId;
@@ -35,6 +36,37 @@ export type FilterParams = {
   userId?: Types.ObjectId;
 };
 
-export interface TypedRequest<T> extends Request {
-  body: T;
-}
+export type ExtendedQuery = Query & {
+  sortBy?: string;
+  sortOrder?: string;
+} & FilterParams;
+
+export type ExpandedRequest = Request & {
+  query: ExtendedQuery;
+  params?: { contactId: Types.ObjectId };
+  file?: string;
+  user: User;
+};
+
+export type AuthPayload = {
+  name?: string;
+  email: string;
+  password: string;
+};
+
+export type AggregatedIds = {
+  userId: Types.ObjectId;
+  _id: Types.ObjectId;
+};
+
+export type UpdatedContact = {
+  data: Contact;
+  isNew: boolean;
+};
+
+export type SortOrder = "asc" | "desc";
+
+export type MongoServerError = Error & {
+  code?: number;
+  status?: number;
+};

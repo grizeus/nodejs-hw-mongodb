@@ -4,12 +4,12 @@ import pino from "pino-http";
 import cookieParser from "cookie-parser";
 
 import router from "./routers/index";
-import getEnv from "./utils/getEnvVar";
+import { getEnvVarWithDefault } from "./utils/getEnvVar";
 import { errorHandler } from "./middlewares/errorHandler";
 import { notFoundHandler } from "./middlewares/notFoundHandler";
 import { UPLOAD_DIR } from "./constants/index";
 
-const PORT = Number(getEnv("PORT", "3000"));
+const PORT = Number(getEnvVarWithDefault("PORT", "3000"));
 
 export const setupServer = () => {
   const app = express();

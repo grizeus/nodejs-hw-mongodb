@@ -1,9 +1,6 @@
 import { Document } from "mongoose";
 
-interface MongoServerError extends Error {
-  code?: number;
-  status?: number;
-}
+import type { MongoServerError } from "../../types/types.d.ts";
 
 export const handleSaveErr = (err: MongoServerError, doc: Document, next: any) => {
   const { name, code } = err;

@@ -1,16 +1,6 @@
-import { SORT_ORDER } from "../constants/index.js";
+import type { ExtendedQuery } from "../types/types.d.ts";
 
-const parseSortOrder = (sortOrder) => {
-  const isKnownOrder = SORT_ORDER.includes(sortOrder);
-
-  if (isKnownOrder) {
-    return sortOrder;
-  }
-
-  return SORT_ORDER[0];
-};
-
-const parseSortBy = (sortBy, sortByList) => {
+const parseSortBy = (sortBy: string, sortByList: string[]) => {
   if (sortByList.includes(sortBy)) {
     return sortBy;
   }
@@ -18,14 +8,16 @@ const parseSortBy = (sortBy, sortByList) => {
   return "_id";
 };
 
-export const parseSortParams = (query, sortByList) => {
+export const parseSortParams = (query: ExtendedQuery, sortByList: string[]) => {
   const { sortOrder, sortBy } = query;
+  let parsedSortBy;
 
-  const parsedSortOrder = parseSortOrder(sortOrder);
-  const parsedSortBy = parseSortBy(sortBy, sortByList);
+  if (sortBy) {
+    parsedSortBy = parseSortBy(sortBy, sortByList);
+  }
 
   return {
-    sortOrder: parsedSortOrder,
+    sortOrder,
     sortBy: parsedSortBy,
   };
 };

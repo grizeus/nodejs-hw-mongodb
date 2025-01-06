@@ -1,4 +1,4 @@
-import { Types, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 import { handleSaveErr, setUpdateSettings } from "./hooks.js";
 import type { Session } from "../../types/types.d.ts";
@@ -6,7 +6,7 @@ import type { Session } from "../../types/types.d.ts";
 const sessionSchema = new Schema<Session>(
   {
     userId: {
-      type: Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "users",
       required: true,
     },

@@ -1,14 +1,19 @@
-import { SORT_ORDER } from "../constants/index.js";
 import { ContactsCollection } from "../db/models/contacts.js";
 import { calculatePaginationData } from "../utils/calculatePaginationData.js";
-import type { FilterParams } from "../types/types.d.ts";
+import type { AggregatedIds, SortOrder, ExpandedRequest, FilterParams, UpdatedContact, User } from "../types/types.d.ts";
 
 export const getAllContacts = async ({
   page = 1,
   perPage = 10,
-  sortOrder = SORT_ORDER[0],
+  sortOrder = "asc",
   sortBy = "_id",
-  filter: FilterParams = {},
+  filter = {},
+}: {
+  page: number,
+  perPage: number,
+  sortOrder: SortOrder,
+  sortBy: string,
+  filter: FilterParams,
 }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
@@ -50,14 +55,14 @@ export const getAllContacts = async ({
   };
 };
 
-export const getContactById = (filter) => ContactsCollection.findOne(filter);
+export const getContactById = (filter: AggregatedIds) => ContactsCollection.findOne(filter);
 
-export const createContact = (payload) => ContactsCollection.create(payload);
+export const createContact = (payload: User) => ContactsCollection.create(payload);
 
-export const deleteContact = (filter) =>
+export const deleteContact = (filter: AggregatedIds) =>
   ContactsCollection.findOneAndDelete(filter);
 
-export const updateContact = async (filter, payload, options = {}) => {
+export const updateContact = async (filter: AggregatedIds, payload: ExpandedRequest, options = {}): Promise<UpdatedContact | null> => {
   const rawRes = await ContactsCollection.findOneAndUpdate(filter, payload, {
     new: true,
     includeResultMetadata: true,

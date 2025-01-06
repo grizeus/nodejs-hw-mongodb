@@ -1,5 +1,5 @@
 import { CONTACT_TYPES } from "../constants/index.js";
-import type { FilterParams } from "../types/types.d.ts";
+import type { ExtendedQuery, FilterParams } from "../types/types.d.ts";
 
 const parseContactType = (type: string) => {
   const isContactType = (contactType: string) =>
@@ -19,7 +19,7 @@ const parseIsFavourite = (favourite: string) => {
   }
 };
 
-export const parseFilterParams = (query: FilterParams): FilterParams => {
+export const parseFilterParams = (query: ExtendedQuery): FilterParams => {
   const { type, isFavourite, name } = query;
 
   let parsedType;
