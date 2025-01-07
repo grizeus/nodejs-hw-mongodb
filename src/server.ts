@@ -3,11 +3,11 @@ import cors from "cors";
 import pino from "pino-http";
 import cookieParser from "cookie-parser";
 
-import router from "./routers/index";
-import { getEnvVarWithDefault } from "./utils/getEnvVar";
-import { errorHandler } from "./middlewares/errorHandler";
-import { notFoundHandler } from "./middlewares/notFoundHandler";
-import { UPLOAD_DIR } from "./constants/index";
+import router from "./routers/index.js";
+import { getEnvVarWithDefault } from "./utils/getEnvVar.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+import { notFoundHandler } from "./middlewares/notFoundHandler.js";
+import { UPLOAD_DIR } from "./constants/index.js";
 
 const PORT = Number(getEnvVarWithDefault("PORT", "3000"));
 

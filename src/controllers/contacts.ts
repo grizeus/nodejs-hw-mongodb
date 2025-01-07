@@ -24,13 +24,13 @@ export const getContactsController = async (
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query, CONTACT_KEYS);
   const filter: FilterParams = parseFilterParams(req.query);
-  filter.userId = req.body.user._id;
+  filter.userId = req.user._id;
 
   const contacts = await getAllContacts({
     page,
     perPage,
-    sortBy: "_id",
-    sortOrder: "asc",
+    sortBy,
+    sortOrder,
     filter,
   });
   res.status(200).json({
@@ -40,7 +40,7 @@ export const getContactsController = async (
   });
 };
 
-const savePhotoHandler = async (photo: string | undefined) => {
+const savePhotoHandler = async (photo: Express.Multer.File | undefined) => {
   let photoUrl;
   if (photo) {
     if (getEnvVar("ENABLE_CLOUDINARY") === "true") {

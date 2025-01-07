@@ -1,15 +1,17 @@
 import createHttpError from "http-errors";
-import { Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 
 import { getSession, getUser } from "../services/auth.js";
 import { ExpandedRequest } from "../types/types.js";
 
 export const authenticate = async (
-  req: ExpandedRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const authHeader = req.get("Authorization");
+  const expandedReq = req as ExpandedRequest;
+
+  const authHeader = expandedReq.get("Authorization");
   if (!authHeader) {
     next(createHttpError(401, "Please provide Authorization header"));
     return;
@@ -40,7 +42,7 @@ export const authenticate = async (
     return;
   }
 
-  req.user = user;
+  expandedReq.user = user;
 
   next();
 };

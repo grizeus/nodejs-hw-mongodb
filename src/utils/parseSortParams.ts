@@ -1,4 +1,12 @@
-import type { ExtendedQuery } from "../types/types.d.ts";
+import type { SortOrder, ExtendedQuery } from "../types/types.d.ts";
+
+const parseSortOrder = (sortOrder: SortOrder) => {
+  if (sortOrder === "asc" || sortOrder === "desc") {
+    return sortOrder;
+  }
+
+  return "asc";
+};
 
 const parseSortBy = (sortBy: string, sortByList: string[]) => {
   if (sortByList.includes(sortBy)) {
@@ -10,14 +18,20 @@ const parseSortBy = (sortBy: string, sortByList: string[]) => {
 
 export const parseSortParams = (query: ExtendedQuery, sortByList: string[]) => {
   const { sortOrder, sortBy } = query;
+
   let parsedSortBy;
+  let parsedSortOrder;
+  
+  if (sortOrder) {
+    parsedSortOrder = parseSortOrder(sortOrder);
+  }
 
   if (sortBy) {
     parsedSortBy = parseSortBy(sortBy, sortByList);
   }
 
   return {
-    sortOrder,
+    sortOrder: parsedSortOrder,
     sortBy: parsedSortBy,
   };
 };

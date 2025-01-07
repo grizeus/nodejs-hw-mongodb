@@ -1,15 +1,15 @@
 import globals from "globals";
 import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
+import tslint from "typescript-eslint";
 
 /** @type {import('eslint').Linter.Config[]} */
 // @ts-check
 export default [
   pluginJs.configs.recommended,
-  tseslint.configs.recommended,
+  tslint.configs.recommended,
   {
     languageOptions: {
-      ecmaVersion: 2020,
+      ecmaVersion: 2022,
       sourceType: "module",
       globals: globals.node,
     },

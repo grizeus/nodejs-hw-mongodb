@@ -38,13 +38,15 @@ export type FilterParams = {
 
 export type ExtendedQuery = Query & {
   sortBy?: string;
-  sortOrder?: string;
+  sortOrder?: SortOrder;
+  page?: string;
+  perPage?: string;
 } & FilterParams;
 
 export type ExpandedRequest = Request & {
   query: ExtendedQuery;
   params?: { contactId: Types.ObjectId };
-  file?: string;
+  file?: Express.Multer.File;
   user: User;
 };
 

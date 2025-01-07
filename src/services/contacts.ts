@@ -9,11 +9,11 @@ export const getAllContacts = async ({
   sortBy = "_id",
   filter = {},
 }: {
-  page: number,
-  perPage: number,
-  sortOrder: SortOrder,
-  sortBy: string,
-  filter: FilterParams,
+  page?: number,
+  perPage?: number,
+  sortOrder?: SortOrder,
+  sortBy?: string,
+  filter?: FilterParams,
 }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
