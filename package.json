@@ -7,7 +7,10 @@
     "lint": "eslint src/**/*.js",
     "start": "node ./src/index.js",
     "dev": "nodemon ./src/index.js",
-    "test": "vitest"
+    "test": "vitest",
+    "build": "npm run build-docs",
+    "build-docs": "redocly bundle ---ext json -o docs/swagger.json",
+    "preview-docs": "redocly preview-docs"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +18,7 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.16.0",
+    "@redocly/cli": "^1.27.1",
     "eslint": "^9.16.0",
     "globals": "^15.13.0",
     "nodemon": "^3.1.7",
