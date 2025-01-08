@@ -1,9 +1,17 @@
 import createHttpError from "http-errors";
+import { Request, Response, NextFunction } from "express";
 
 import { getSession, getUser } from "../services/auth.js";
+import { ExpandedRequest } from "../types/types.js";
 
-export const authenticate = async (req, res, next) => {
-  const authHeader = req.get("Authorization");
+export const authenticate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const expandedReq = req as ExpandedRequest;
+
+  const authHeader = expandedReq.get("Authorization");
   if (!authHeader) {
     next(createHttpError(401, "Please provide Authorization header"));
     return;
@@ -21,7 +29,8 @@ export const authenticate = async (req, res, next) => {
     return;
   }
 
-  const isAccessTokenExpired = new Date() > new Date(session.accessTokenValidUntil);
+  const isAccessTokenExpired =
+    new Date() > new Date(session.accessTokenValidUntil);
   if (isAccessTokenExpired) {
     next(createHttpError(401, "Access token expired"));
     return;
@@ -33,7 +42,7 @@ export const authenticate = async (req, res, next) => {
     return;
   }
 
-  req.user = user;
+  expandedReq.user = user;
 
   next();
 };

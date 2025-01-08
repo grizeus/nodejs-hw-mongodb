@@ -1,6 +1,7 @@
-const parseNumber = (number, defaultValue) => {
-  const isString = typeof number === "string";
-  if (!isString) {
+import type { ExtendedQuery } from "../types/types.d.ts";
+
+const parseNumber = (number: string | undefined, defaultValue: number) => {
+  if (!number) {
     return defaultValue;
   }
 
@@ -12,7 +13,7 @@ const parseNumber = (number, defaultValue) => {
   return parsedNumber;
 };
 
-export const parsePaginationParams = (query) => {
+export const parsePaginationParams = (query: ExtendedQuery) => {
   const { page, perPage } = query;
 
   const parsedPage = parseNumber(page, 1);

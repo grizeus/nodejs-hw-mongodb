@@ -5,17 +5,21 @@ import jwt from "jsonwebtoken";
 import path from "node:path";
 import fs from "node:fs/promises";
 import handlebars from "handlebars";
+import { Types } from "mongoose";
 
-import getEnv from "../utils/getEnvVar.js";
+import { getEnvVar } from "../utils/getEnvVar.js";
 import { sendEmail } from "../utils/sendMail.js";
 import { UsersCollection } from "../db/models/user.js";
 import { SessionCollection } from "../db/models/session.js";
 import {
   refreshTokenLifetime,
-  accessTokenLifetime, SMTP, TEMPALTES_DIR
+  accessTokenLifetime,
+  SMTP,
+  TEMPALTES_DIR,
 } from "../constants/index.js";
+import type { AuthPayload } from "../types/types.d.ts";
 
-export const registerUser = async (payload) => {
+export const registerUser = async (payload: AuthPayload) => {
   const { email, password } = payload;
   const user = await UsersCollection.findOne({ email });
 
@@ -32,7 +36,8 @@ export const registerUser = async (payload) => {
   return newUser;
 };
 
-export const loginUser = async ({ email, password }) => {
+export const loginUser = async (payload: AuthPayload) => {
+  const { email, password } = payload;
   const user = await UsersCollection.findOne({ email });
 
   if (!user) {
@@ -58,7 +63,7 @@ export const loginUser = async ({ email, password }) => {
   });
 };
 
-export const logoutUser = async (sessionId) => {
+export const logoutUser = async (sessionId: Types.ObjectId) => {
   await SessionCollection.deleteOne({ _id: sessionId });
 };
 
@@ -74,7 +79,13 @@ const createSession = () => {
   };
 };
 
-export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
+export const refreshUsersSession = async ({
+  sessionId,
+  refreshToken,
+}: {
+  sessionId: Types.ObjectId;
+  refreshToken: string;
+}) => {
   const oldSession = await SessionCollection.findOne({
     _id: sessionId,
     refreshToken,
@@ -104,10 +115,10 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
   });
 };
 
-export const getSession = (filter) => SessionCollection.findOne(filter);
-export const getUser = (filter) => UsersCollection.findOne(filter);
+export const getSession = (filter: {accessToken: string}) => SessionCollection.findOne(filter);
+export const getUser = (filter: {_id?: Types.ObjectId, email?: string}) => UsersCollection.findOne(filter);
 
-export const requestResetToken = async (email) => {
+export const requestResetToken = async (email: string) => {
   const user = await getUser({ email });
 
   if (!user) {
@@ -118,34 +129,37 @@ export const requestResetToken = async (email) => {
       sub: user._id,
       email,
     },
-    getEnv("JWT_SECRET"),
+    getEnvVar("JWT_SECRET"),
     {
       expiresIn: "15m",
     },
   );
 
-  const resetPassTemplatePath = path.join(TEMPALTES_DIR, "reset-password-email.html");
+  const resetPassTemplatePath = path.join(
+    TEMPALTES_DIR,
+    "reset-password-email.html",
+  );
 
   const templateSource = (await fs.readFile(resetPassTemplatePath)).toString();
   const template = handlebars.compile(templateSource);
   const html = template({
     name: user.name,
-    link: `${getEnv("APP_DOMAIN")}/auth/reset-password?token=${resetToken}`,
+    link: `${getEnvVar("APP_DOMAIN")}/auth/reset-password?token=${resetToken}`,
   });
 
   await sendEmail({
-    from: getEnv(SMTP.SMTP_FROM),
+    from: getEnvVar(SMTP.SMTP_FROM),
     to: email,
     subject: "Reset your password",
-    html
+    html,
   });
 };
 
-export const resetPassword = async (payload) => {
-  let entries;
+export const resetPassword = async (payload: {token: string, password: string}) => {
+  let entries: any;
 
   try {
-    entries = jwt.verify(payload.token, getEnv("JWT_SECRET"));
+    entries = jwt.verify(payload.token, getEnvVar("JWT_SECRET"));
   } catch (err) {
     if (err instanceof Error) {
       throw createHttpError(401, err.message);

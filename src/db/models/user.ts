@@ -2,8 +2,9 @@ import { Schema, model } from "mongoose";
 
 import { handleSaveErr, setUpdateSettings } from "./hooks.js";
 import { emailRegExp } from "../../constants/index.js";
+import type { User } from "../../types/types.d.ts";
 
-const usersSchema = new Schema(
+const usersSchema = new Schema<User>(
   {
     name: {
       type: String,
@@ -26,7 +27,7 @@ const usersSchema = new Schema(
   },
 );
 
-usersSchema.methods.toJSON = function() {
+usersSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
   return obj;
@@ -34,8 +35,8 @@ usersSchema.methods.toJSON = function() {
 
 export const USER_KEYS = Object.keys(usersSchema.paths); // NOTE: leave for now
 
-usersSchema.post("save", handleSaveErr);
-usersSchema.pre("findOneAndUpdate", setUpdateSettings);
-usersSchema.post("findOneAndUpdate", handleSaveErr);
+usersSchema.post<User>("save", handleSaveErr);
+usersSchema.pre<User>("findOneAndUpdate", setUpdateSettings);
+usersSchema.post<User>("findOneAndUpdate", handleSaveErr);
 
-export const UsersCollection = model("user", usersSchema);
+export const UsersCollection = model<User>("user", usersSchema);
