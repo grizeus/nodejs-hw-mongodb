@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
 import jwt from "jsonwebtoken";
 import path from "node:path";
-import fs from "node:fs/promises";
+import {readFile} from "node:fs/promises";
 import handlebars from "handlebars";
 
 import getEnv from "../utils/getEnvVar.js";
@@ -126,7 +126,7 @@ export const requestResetToken = async (email) => {
 
   const resetPassTemplatePath = path.join(TEMPALTES_DIR, "reset-password-email.html");
 
-  const templateSource = (await fs.readFile(resetPassTemplatePath)).toString();
+  const templateSource = await readFile(resetPassTemplatePath, "utf-8");
   const template = handlebars.compile(templateSource);
   const html = template({
     name: user.name,
