@@ -2,7 +2,7 @@ apis:
   sample@v1:
     root: docs/openapi.yaml
 extends:
-  - recomended
+  - recommended
 rules:
   no-unused-components: error
 theme:
