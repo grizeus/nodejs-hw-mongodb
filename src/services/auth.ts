@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
 import jwt from "jsonwebtoken";
 import path from "node:path";
-import fs from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import handlebars from "handlebars";
 import { Types } from "mongoose";
 
@@ -115,8 +115,10 @@ export const refreshUsersSession = async ({
   });
 };
 
-export const getSession = (filter: {accessToken: string}) => SessionCollection.findOne(filter);
-export const getUser = (filter: {_id?: Types.ObjectId, email?: string}) => UsersCollection.findOne(filter);
+export const getSession = (filter: { accessToken: string }) =>
+  SessionCollection.findOne(filter);
+export const getUser = (filter: { _id?: Types.ObjectId; email?: string }) =>
+  UsersCollection.findOne(filter);
 
 export const requestResetToken = async (email: string) => {
   const user = await getUser({ email });
@@ -140,7 +142,7 @@ export const requestResetToken = async (email: string) => {
     "reset-password-email.html",
   );
 
-  const templateSource = (await fs.readFile(resetPassTemplatePath)).toString();
+  const templateSource = await readFile(resetPassTemplatePath, "utf-8");
   const template = handlebars.compile(templateSource);
   const html = template({
     name: user.name,
@@ -155,7 +157,10 @@ export const requestResetToken = async (email: string) => {
   });
 };
 
-export const resetPassword = async (payload: {token: string, password: string}) => {
+export const resetPassword = async (payload: {
+  token: string;
+  password: string;
+}) => {
   let entries: any;
 
   try {
