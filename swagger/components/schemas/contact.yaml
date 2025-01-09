@@ -37,4 +37,4 @@ properties:
   photo:
     description: "Link to contact's photo"
     type: string
-    example: https://res.cloudinary.com/uqwgdu/image/upload/image.png
+    example: https://res.cloudinary.com/demo/image/upload/sample.jpg
