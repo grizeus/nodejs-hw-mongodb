@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 
 export const sendEmail = async (options) => {
   try {
-    return await transporter.sendMail(options);
+    return await transporter.sendMail({from: getEnv(SMTP.SMTP_FROM), ...options});
   } catch (err) {
 
     if (err instanceof Error) {
