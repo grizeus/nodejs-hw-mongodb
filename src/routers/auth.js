@@ -18,6 +18,11 @@ router.post(
   ctrlWrapper(controller.registerController),
 );
 
+router.get(
+  "/verify",
+  ctrlWrapper(controller.verifyController)
+);
+
 router.post(
   "/login",
   validateBody(loginUserSchema),
