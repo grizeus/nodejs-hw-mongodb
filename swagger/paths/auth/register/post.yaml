@@ -10,23 +10,7 @@ requestBody:
     application/json:
       schema:
         type: object
-        required:
-          - name
-          - email
-          - password
-        properties:
-          name:
-            description: "User's name"
-            type: string
-            example: "John Wick"
-          email:
-            description: "User's e-mail address"
-            type: string
-            example: "j.wick@info.com"
-          password:
-            description: "User's type"
-            type: string
-            example: "verystrongpwd1"
+        $ref: "../../../components/schemas/userReq.yaml"
 responses:
   "201":
     description: Register a user
@@ -47,8 +31,6 @@ responses:
               example: Successfully registered a user!
             data:
               type: object
-              $ref: "../../../components/schemas/user.yaml"
-  "401":
-    $ref: "../../../components/responses/401.yaml"
+              $ref: "../../../components/schemas/userRes.yaml"
   "409":
     $ref: "../../../components/responses/409.yaml"

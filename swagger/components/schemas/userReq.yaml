@@ -13,6 +13,6 @@ properties:
     type: string
     example: "j.wick@info.com"
   password:
-    description: "User's type"
+    description: "User's password"
     type: string
     example: "verystrongpwd1"
