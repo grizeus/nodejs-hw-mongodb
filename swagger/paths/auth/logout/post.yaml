@@ -1,0 +1,20 @@
+tags:
+  - Auth
+summary: Logout current user
+operationId: logoutUser
+description: "Logout current user"
+security:
+  - bearerAuth: []
+responses:
+  "204":
+    description: "Successfully loged out a user"
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+          properties:
+            status:
+              type: integer
+              example: 204

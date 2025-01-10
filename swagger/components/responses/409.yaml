@@ -13,7 +13,7 @@ content:
           example: 409
         message:
           type: string
-          example: ConflictError
+          example: Email in use
         data:
           type: object
           required:

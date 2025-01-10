@@ -1,0 +1,18 @@
+type: object
+required:
+  - name
+  - email
+  - password
+properties:
+  name:
+    description: "User's name"
+    type: string
+    example: "John Wick"
+  email:
+    description: "User's e-mail address"
+    type: string
+    example: "j.wick@info.com"
+  password:
+    description: "User's password"
+    type: string
+    example: "verystrongpwd1"
