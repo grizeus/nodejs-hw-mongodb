@@ -38,10 +38,6 @@ requestBody:
             description: "Whether is contact is favourite"
             type: boolean
             example: true
-          userId:
-            description: "Contact's owner id"
-            type: string
-            example: 65e4decdd286b36665d54af9
           photo:
             description: "Link to contact's photo"
             type: string

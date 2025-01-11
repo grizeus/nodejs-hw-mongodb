@@ -5,6 +5,19 @@ operationId: refreshUsersSession
 description: " Refresh a user session"
 security:
   - bearerAuth: []
+parameters: 
+  - in: cookie
+    name: sessionId
+    required: true
+    schema:
+      type: string
+  - in: cookie
+    name: refreshToken
+    required: true
+    schema:
+      description: "Random string in the base64 encoding"
+      type: string
+      example: "Ier8Y1B7G3giA1jFzFRbfKrGQPzTjLK7UU6dL91p" 
 responses:
   "200":
     description: Login a user
@@ -25,7 +38,13 @@ responses:
               example: Succesfully refreshed a session!
             data:
               type: object
-              $ref: "../../../components/schemas/session.yaml"
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  description: "Random string in the base64 encoding"
+                  type: string
+                  example: "Ier8Y1B7G3giA1jFzFRbfKrGQPzTjLK7UU6dL91p"
   "401":
     description: Authorization error
     content:
