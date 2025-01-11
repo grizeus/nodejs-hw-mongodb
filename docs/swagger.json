@@ -850,6 +850,7 @@
           {
             "in": "cookie",
             "name": "refreshToken",
+            "required": true,
             "schema": {
               "description": "Random string in the base64 encoding",
               "type": "string",
