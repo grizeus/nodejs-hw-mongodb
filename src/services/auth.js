@@ -13,13 +13,13 @@ import { SessionCollection } from "../db/models/session.js";
 import {
   refreshTokenLifetime,
   accessTokenLifetime,
-  TEMPALTES_DIR,
+  TEMPLATES_DIR,
 } from "../constants/index.js";
 
 const VERIFICATION = getEnv("ENABLE_VERIFICATION") === "true";
-const verifyEmailTemplatePath = path.join(TEMPALTES_DIR, "verify-email.html");
+const verifyEmailTemplatePath = path.join(TEMPLATES_DIR, "verify-email.html");
 const resetPassTemplatePath = path.join(
-  TEMPALTES_DIR,
+  TEMPLATES_DIR,
   "reset-password-email.html",
 );
 const verifyTemplateSource = await readFile(verifyEmailTemplatePath, "utf-8");
@@ -71,7 +71,7 @@ export const registerUser = async (payload) => {
 
 export const verify = async (token) => {
   try {
-    const { email } = jwt.verify(token, getEnv("JWT_SECRET"));
+    const { email } = jwt.verify(token, jwtSecret);
     const user = await getUser({ email });
     if (!user) {
       throw createHttpError(401, "User not found");

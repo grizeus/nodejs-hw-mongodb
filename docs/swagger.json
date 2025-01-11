@@ -197,8 +197,7 @@
                 "required": [
                   "name",
                   "phoneNumber",
-                  "contactType",
-                  "userId"
+                  "contactType"
                 ],
                 "properties": {
                   "name": {
@@ -229,11 +228,6 @@
                     "description": "Whether is contact is favourite",
                     "type": "boolean",
                     "example": true
-                  },
-                  "userId": {
-                    "description": "Contact's owner id",
-                    "type": "string",
-                    "example": "65e4decdd286b36665d54af9"
                   },
                   "photo": {
                     "description": "Link to contact's photo",
@@ -401,11 +395,6 @@
                     "type": "boolean",
                     "example": true
                   },
-                  "userId": {
-                    "description": "Contact's owner id",
-                    "type": "string",
-                    "example": "65e4decdd286b36665d54af9"
-                  },
                   "photo": {
                     "description": "Link to contact's photo",
                     "type": "string",
@@ -485,8 +474,7 @@
                 "required": [
                   "name",
                   "phoneNumber",
-                  "contactType",
-                  "userId"
+                  "contactType"
                 ],
                 "properties": {
                   "name": {
@@ -517,11 +505,6 @@
                     "description": "Whether is contact is favourite",
                     "type": "boolean",
                     "example": true
-                  },
-                  "userId": {
-                    "description": "Contact's owner id",
-                    "type": "string",
-                    "example": "65e4decdd286b36665d54af9"
                   },
                   "photo": {
                     "description": "Link to contact's photo",
@@ -625,23 +608,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Successfully deleted a contact",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 204
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Successfully deleted a contact"
           },
           "401": {
             "$ref": "#/components/responses/401"
@@ -772,7 +739,16 @@
                     },
                     "data": {
                       "type": "object",
-                      "$ref": "#/components/schemas/session"
+                      "required": [
+                        "accessToken"
+                      ],
+                      "properties": {
+                        "accessToken": {
+                          "description": "Random string in the base64 encoding",
+                          "type": "string",
+                          "example": "Ier8Y1B7G3giA1jFzFRbfKrGQPzTjLK7UU6dL91p"
+                        }
+                      }
                     }
                   }
                 }
@@ -832,25 +808,19 @@
             "bearerAuth": []
           }
         ],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "204": {
-            "description": "Successfully loged out a user",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 204
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Successfully loged out a user"
           }
         }
       }
@@ -866,6 +836,26 @@
         "security": [
           {
             "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "refreshToken",
+            "required": true,
+            "schema": {
+              "description": "Random string in the base64 encoding",
+              "type": "string",
+              "example": "Ier8Y1B7G3giA1jFzFRbfKrGQPzTjLK7UU6dL91p"
+            }
           }
         ],
         "responses": {
@@ -891,7 +881,16 @@
                     },
                     "data": {
                       "type": "object",
-                      "$ref": "#/components/schemas/session"
+                      "required": [
+                        "accessToken"
+                      ],
+                      "properties": {
+                        "accessToken": {
+                          "description": "Random string in the base64 encoding",
+                          "type": "string",
+                          "example": "Ier8Y1B7G3giA1jFzFRbfKrGQPzTjLK7UU6dL91p"
+                        }
+                      }
                     }
                   }
                 }
@@ -1261,39 +1260,6 @@
             "description": "User's e-mail address",
             "type": "string",
             "example": "j.wick@info.com"
-          }
-        }
-      },
-      "session": {
-        "type": "object",
-        "required": [
-          "userId",
-          "accessToken",
-          "refreshToken",
-          "accessTokenValidUntil",
-          "refreshTokenValidUntil"
-        ],
-        "properties": {
-          "userId": {
-            "description": "Contact's owner id",
-            "type": "string",
-            "example": "65e4decdd286b36665d54af9"
-          },
-          "accessToken": {
-            "description": "Random string in the base64 encoding",
-            "type": "string"
-          },
-          "refreshToken": {
-            "description": "Random string in the base64 encoding",
-            "type": "string"
-          },
-          "accessTokenValidUntil": {
-            "description": "The date until which accessToken is valid",
-            "type": "string"
-          },
-          "refreshTokenValidUntil": {
-            "description": "The date until which refreshToken is valid",
-            "type": "string"
           }
         }
       }

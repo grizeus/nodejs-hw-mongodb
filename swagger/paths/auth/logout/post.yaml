@@ -5,16 +5,12 @@ operationId: logoutUser
 description: "Logout current user"
 security:
   - bearerAuth: []
+parameters:
+  - in: cookie
+    name: sessionId
+    required: true
+    schema:
+      type: string
 responses:
   "204":
     description: "Successfully loged out a user"
-    content:
-      application/json:
-        schema:
-          type: object
-          required:
-            - status
-          properties:
-            status:
-              type: integer
-              example: 204

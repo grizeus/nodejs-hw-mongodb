@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import cloudinary from "cloudinary";
 
-import getEnv from "../utils/getEnvVar.js";
+import getEnv from "./getEnvVar.js";
 import { CLOUDINARY } from "../constants/index.js";
 
 cloudinary.v2.config({
@@ -16,4 +16,9 @@ export const saveFileToCloudinary = async (file) => {
   await fs.unlink(file.path);
 
   return res.secure_url;
+};
+
+export const deleteFileFromCloudinary = async (publicId) => {
+  const res = await cloudinary.v2.uploader.destroy(publicId);
+  return res.result;
 };

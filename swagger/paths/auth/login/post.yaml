@@ -42,7 +42,13 @@ responses:
               example: Successfully logged in an user!
             data:
               type: object
-              $ref: "../../../components/schemas/session.yaml"
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  description: "Random string in the base64 encoding"
+                  type: string
+                  example: "Ier8Y1B7G3giA1jFzFRbfKrGQPzTjLK7UU6dL91p"
   "401":
     description: Authorization error
     content:

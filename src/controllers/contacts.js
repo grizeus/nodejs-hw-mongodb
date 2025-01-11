@@ -11,9 +11,17 @@ import { parsePaginationParams } from "../utils/parsePaginationParams.js";
 import { parseSortParams } from "../utils/parseSortParams.js";
 import { parseFilterParams } from "../utils/parseFilterParams.js";
 import { CONTACT_KEYS } from "../db/models/contacts.js";
-import { saveFileToUploadDir } from "../utils/saveFileToUploadDir.js";
-import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js";
+import {
+  deleteFileFromUploadDir,
+  saveFileToUploadDir,
+} from "../utils/handleFileUploadDir.js";
+import {
+  deleteFileFromCloudinary,
+  saveFileToCloudinary,
+} from "../utils/handleFileCloudinary.js";
 import getEnv from "../utils/getEnvVar.js";
+
+const enableCloudinary = getEnv("ENABLE_CLOUDINARY") === "true";
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -38,7 +46,7 @@ export const getContactsController = async (req, res) => {
 const savePhotoHandler = async (photo) => {
   let photoUrl;
   if (photo) {
-    if (getEnv("ENABLE_CLOUDINARY") === "true") {
+    if (enableCloudinary) {
       photoUrl = await saveFileToCloudinary(photo);
     } else {
       photoUrl = await saveFileToUploadDir(photo);
@@ -47,11 +55,32 @@ const savePhotoHandler = async (photo) => {
   return photoUrl;
 };
 
+const deletePhotoHandler = async (photoUrl) => {
+  const isOnCloudinary = photoUrl.slice(0, 26) === "https://res.cloudinary.com";
+
+  try {
+    if (isOnCloudinary) {
+      // extract publicId from URI
+      const extPos = photoUrl.lastIndexOf(".");
+      const nameStart = photoUrl.lastIndexOf("/") + 1;
+      const publicId = photoUrl.slice(nameStart, extPos);
+
+      await deleteFileFromCloudinary(publicId);
+    } else {
+      photoUrl = await deleteFileFromUploadDir(photoUrl);
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      throw createHttpError(500, "Can't delete photo");
+    }
+    throw err;
+  }
+};
+
 export const getContactByIdController = async (req, res) => {
   const { contactId: _id } = req.params;
   const userId = req.user._id;
   const contact = await getContactById({ _id, userId });
-
 
   if (!contact) {
     throw createHttpError(404, `Contact with id ${_id} not found`);
@@ -82,6 +111,13 @@ export const createContactController = async (req, res) => {
 export const deleteContactController = async (req, res) => {
   const { contactId: _id } = req.params;
   const userId = req.user._id;
+
+  // delete photo before deleteng from DB
+  const { photo } = await getContactById({ _id, userId });
+  if (photo) {
+    deletePhotoHandler(photo);
+  }
+
   const contact = await deleteContact({ _id, userId });
 
   if (!contact) {
@@ -107,7 +143,6 @@ export const upsertContactController = async (req, res) => {
   );
 
   if (!data) {
-
     throw createHttpError(404, "Contact not found");
   }
 
