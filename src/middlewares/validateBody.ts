@@ -3,7 +3,7 @@ import { ObjectSchema } from "joi";
 import createHttpError from "http-errors";
 
 export const validateBody = (schema: ObjectSchema) => {
-  const runner = async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     try {
       await schema.validateAsync(req.body, {
         abortEarly: false,
@@ -17,6 +17,4 @@ export const validateBody = (schema: ObjectSchema) => {
       );
     }
   };
-
-  return runner;
 };
