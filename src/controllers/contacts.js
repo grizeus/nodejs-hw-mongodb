@@ -67,7 +67,9 @@ const deletePhotoHandler = async (photoUrl) => {
 
       await deleteFileFromCloudinary(publicId);
     } else {
-      photoUrl = await deleteFileFromUploadDir(photoUrl);
+      const nameStart = photoUrl.lastIndexOf("/") + 1;
+      const filename = photoUrl.slice(nameStart);
+      await deleteFileFromUploadDir(filename);
     }
   } catch (err) {
     if (err instanceof Error) {
