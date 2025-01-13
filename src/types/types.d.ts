@@ -16,6 +16,7 @@ export type User = {
   name: string;
   email: string;
   password: string;
+  isVerified: boolean;
 };
 
 export type Contact = {

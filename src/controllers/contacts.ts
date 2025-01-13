@@ -12,10 +12,22 @@ import { parsePaginationParams } from "../utils/parsePaginationParams.js";
 import { parseSortParams } from "../utils/parseSortParams.js";
 import { parseFilterParams } from "../utils/parseFilterParams.js";
 import { CONTACT_KEYS } from "../db/models/contacts.js";
-import { saveFileToUploadDir } from "../utils/saveFileToUploadDir.js";
-import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js";
+import {
+  deleteFileFromUploadDir,
+  saveFileToUploadDir,
+} from "../utils/handleFileUploadDir.js";
+import {
+  deleteFileFromCloudinary,
+  saveFileToCloudinary,
+} from "../utils/handleFileCloudinary.js";
 import { getEnvVar } from "../utils/getEnvVar.js";
-import type { FilterParams, ExpandedRequest } from "../types/types.d.ts";
+import type {
+  FilterParams,
+  ExpandedRequest,
+  Contact,
+} from "../types/types.d.ts";
+
+const enableCloudinary = getEnvVar("ENABLE_CLOUDINARY") === "true";
 
 export const getContactsController = async (
   req: ExpandedRequest,
@@ -43,13 +55,37 @@ export const getContactsController = async (
 const savePhotoHandler = async (photo: Express.Multer.File | undefined) => {
   let photoUrl;
   if (photo) {
-    if (getEnvVar("ENABLE_CLOUDINARY") === "true") {
+    if (enableCloudinary) {
       photoUrl = await saveFileToCloudinary(photo);
     } else {
       photoUrl = await saveFileToUploadDir(photo);
     }
   }
   return photoUrl;
+};
+
+const deletePhotoHandler = async (photoUrl: string): Promise<void> => {
+  const isOnCloudinary = photoUrl.slice(0, 26) === "https://res.cloudinary.com";
+
+  try {
+    if (isOnCloudinary) {
+      // extract publicId from URI
+      const extPos = photoUrl.lastIndexOf(".");
+      const nameStart = photoUrl.lastIndexOf("/") + 1;
+      const publicId = photoUrl.slice(nameStart, extPos);
+
+      await deleteFileFromCloudinary(publicId);
+    } else {
+      const nameStart = photoUrl.lastIndexOf("/") + 1;
+      const filename = photoUrl.slice(nameStart);
+      await deleteFileFromUploadDir(filename);
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      throw createHttpError(500, "Can't delete photo");
+    }
+    throw err;
+  }
 };
 
 export const getContactByIdController = async (
@@ -94,6 +130,13 @@ export const deleteContactController = async (
 ) => {
   const { contactId: _id } = req.params;
   const userId = req.user._id;
+
+  // delete photo before deleteng from DB
+  const { photo } = (await getContactById({ _id, userId })) as Contact;
+  if (photo) {
+    deletePhotoHandler(photo);
+  }
+
   const contact = await deleteContact({ _id, userId });
 
   if (!contact) {

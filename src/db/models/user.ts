@@ -20,6 +20,11 @@ const usersSchema = new Schema<User>(
       type: String,
       required: true,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   {
     timestamps: true,

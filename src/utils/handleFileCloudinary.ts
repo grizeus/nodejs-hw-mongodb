@@ -17,3 +17,8 @@ export const saveFileToCloudinary = async (file: Express.Multer.File) => {
 
   return res.secure_url;
 };
+
+export const deleteFileFromCloudinary = async (publicId: string) => {
+  const res = await cloudinary.v2.uploader.destroy(publicId);
+  return res.result;
+};

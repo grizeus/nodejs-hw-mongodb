@@ -13,14 +13,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const from = getEnvVar(SMTP.SMTP_FROM);
+
 export const sendEmail = async (options: {
-  from: string;
   to: string;
   subject: string;
   html: string;
 }) => {
   try {
-    return await transporter.sendMail(options);
+    return await transporter.sendMail({from, ...options});
   } catch (err) {
 
     if (err instanceof Error) {

@@ -7,6 +7,7 @@ import {
   refreshUsersSession,
   requestResetToken,
   resetPassword,
+  verify,
 } from "../services/auth.js";
 import type { Session } from "../types/types.d.ts";
 
@@ -17,6 +18,16 @@ export const registerController = async (req: Request, res: Response) => {
     status: 201,
     message: "Successfully registered a user",
     data: user,
+  });
+};
+
+export const verifyController = async (req: Request, res: Response) => {
+  const { verifyToken } = req.query;
+  await verify(verifyToken as string);
+
+  res.json({
+    status: 200,
+    message: "Successfully verified an email!",
   });
 };
 
@@ -77,7 +88,7 @@ export const refreshUserSessionController = async (
 
   res.json({
     status: 200,
-    message: "Succesfully refreshed a session!",
+    message: "Successfully refreshed a session!",
     data: {
       accessToken: session.accessToken,
     },
