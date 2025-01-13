@@ -17,6 +17,10 @@ import {
   TEMPLATES_DIR,
 } from "../constants/index.js";
 import type { AuthPayload, User } from "../types/types.d.ts";
+import {
+  getFullNameFromGoogleTokenPayload,
+  validateCode,
+} from "../utils/googleOAuth2.js";
 
 const VERIFICATION = getEnvVar("ENABLE_VERIFICATION") === "true";
 const verifyEmailTemplatePath = path.join(TEMPLATES_DIR, "verify-email.html");
@@ -94,12 +98,12 @@ export const loginUser = async (payload: AuthPayload) => {
   const { email, password } = payload;
   const user = (await UsersCollection.findOne({ email })) as User;
 
-   if (VERIFICATION) {
-     if (!user.isVerified) {
-       throw createHttpError(401, "Email not verified");
-     }
+  if (VERIFICATION) {
+    if (!user.isVerified) {
+      throw createHttpError(401, "Email not verified");
+    }
   }
-  
+
   if (!user) {
     throw createHttpError(401, "Email or password invalid");
   }
@@ -120,6 +124,34 @@ export const loginUser = async (payload: AuthPayload) => {
     refreshToken,
     accessTokenValidUntil: Date.now() + accessTokenLifetime,
     refreshTokenValidUntil: Date.now() + refreshTokenLifetime,
+  });
+};
+
+export const loginOrSignupWithGoogle = async (code: string) => {
+  const loginTicket = await validateCode(code);
+  const payload = loginTicket.getPayload();
+  if (!payload) {
+    throw createHttpError(401);
+  }
+  let user = await UsersCollection.findOne({
+    email: payload.email,
+  });
+
+  if (!user) {
+    const password = await bcrypt.hash(randomBytes(10), 10);
+    user = await UsersCollection.create({
+      email: payload.email,
+      name: getFullNameFromGoogleTokenPayload(payload),
+      password,
+      isVerified: true,
+    });
+  }
+
+  const newSession = createSession();
+
+  return await SessionCollection.create({
+    userId: user._id,
+    ...newSession,
   });
 };
 
