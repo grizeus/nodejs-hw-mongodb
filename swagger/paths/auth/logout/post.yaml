@@ -1,0 +1,16 @@
+tags:
+  - Auth
+summary: Logout current user
+operationId: logoutUser
+description: "Logout current user"
+security:
+  - bearerAuth: []
+parameters:
+  - in: cookie
+    name: sessionId
+    required: true
+    schema:
+      type: string
+responses:
+  "204":
+    description: "Successfully loged out a user"

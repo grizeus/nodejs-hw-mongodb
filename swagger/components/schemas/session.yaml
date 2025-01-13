@@ -1,0 +1,24 @@
+type: object
+required:
+  - userId
+  - accessToken
+  - refreshToken
+  - accessTokenValidUntil
+  - refreshTokenValidUntil
+properties:
+  userId:
+    description: "Contact's owner id"
+    type: string
+    example: 65e4decdd286b36665d54af9
+  accessToken:
+    description: "Random string in the base64 encoding"
+    type: string
+  refreshToken:
+    description: "Random string in the base64 encoding"
+    type: string
+  accessTokenValidUntil:
+    description: "The date until which accessToken is valid"
+    type: string
+  refreshTokenValidUntil:
+    description: "The date until which refreshToken is valid"
+    type: string

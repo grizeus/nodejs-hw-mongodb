@@ -7,14 +7,14 @@
     "lint": "eslint ./src/**/*.ts",
     "build:ts": "tsc",
     "start": "node ./dist/index.js",
-    "dev": "bun ./src/index.ts",
+    "dev": "bun --watch src/index.ts",
     "test": "vitest",
     "build:docs": "npm run build-docs",
     "build-docs": "redocly bundle ./docs/openapi.yaml --ext json -o ./docs/swagger.json",
     "preview-docs": "redocly preview-docs"
   },
   "keywords": [],
-  "author": "",
+  "author": "grizeus",
   "license": "ISC",
   "description": "",
   "devDependencies": {

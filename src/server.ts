@@ -25,7 +25,7 @@ export const setupServer = () => {
   );
 
   app.use(
-    pino({
+    pino.default({
       transport: {
         target: "pino-pretty",
       },
