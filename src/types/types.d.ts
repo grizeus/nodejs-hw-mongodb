@@ -47,7 +47,6 @@ export type ExtendedQuery = Query & {
 
 export type ExpandedRequest = Request & {
   query: ExtendedQuery;
-  params?: { contactId: Types.ObjectId };
   file?: globalThis.Express.Multer.File;
   user: User;
 };

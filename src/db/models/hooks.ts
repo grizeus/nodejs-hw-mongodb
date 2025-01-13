@@ -1,8 +1,14 @@
 import { Document, Query } from "mongoose";
 import { NextFunction } from "express";
-import type { MongoServerError,  } from "../../types/types.d.ts";
+import type { MongoServerError, } from "../../types/types.d.ts";
 
-export const handleSaveErr = (
+export type SaveErrorHandler = (
+  error: MongoServerError,
+  doc: Document,
+  next: NextFunction,
+) => void;
+
+export const handleSaveErr: SaveErrorHandler = (
   err: MongoServerError,
   doc: Document,
   next: NextFunction,
