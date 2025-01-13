@@ -11,7 +11,7 @@ cloudinary.v2.config({
   api_secret: getEnvVar(CLOUDINARY.API_SECRET),
 });
 
-export const saveFileToCloudinary = async (file: Express.Multer.File) => {
+export const saveFileToCloudinary = async (file: globalThis.Express.Multer.File) => {
   const res = await cloudinary.v2.uploader.upload(file.path);
   await fs.unlink(file.path);
 

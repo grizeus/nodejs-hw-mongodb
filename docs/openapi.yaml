@@ -6,7 +6,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   description:
-    "Documentattion for contact storage backend-app"
+    "Documentation for contact storage backend-app"
 tags:
   - name: Contacts
     description: Operations about contacts.
@@ -31,22 +31,22 @@ paths:
     delete:
       $ref: ../swagger/paths/contacts/{id}/delete.yaml
   /auth/register:
-    post: 
+    post:
       $ref: ../swagger/paths/auth/register/post.yaml
   /auth/login:
-    post: 
+    post:
       $ref: ../swagger/paths/auth/login/post.yaml
   /auth/logout:
-    post: 
+    post:
       $ref: ../swagger/paths/auth/logout/post.yaml
   /auth/refresh:
-    post: 
+    post:
       $ref: ../swagger/paths/auth/refresh/post.yaml
   /auth/reset-pwd:
-    post: 
+    post:
       $ref: ../swagger/paths/auth/reset-pwd/post.yaml
   /auth/send-reset-email:
-    post: 
+    post:
       $ref: ../swagger/paths/auth/send-reset-email/post.yaml
 components:
   securitySchemes:

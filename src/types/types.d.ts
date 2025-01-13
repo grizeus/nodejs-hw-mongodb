@@ -1,5 +1,6 @@
 import { Request } from "express";
 import { Query } from "express-serve-static-core";
+import { JwtPayload } from "jsonwebtoken";
 import { Types } from "mongoose";
 
 export type Session = {
@@ -47,7 +48,7 @@ export type ExtendedQuery = Query & {
 export type ExpandedRequest = Request & {
   query: ExtendedQuery;
   params?: { contactId: Types.ObjectId };
-  file?: Express.Multer.File;
+  file?: globalThis.Express.Multer.File;
   user: User;
 };
 
@@ -72,4 +73,8 @@ export type SortOrder = "asc" | "desc";
 export type MongoServerError = Error & {
   code?: number;
   status?: number;
+};
+
+type ExtendedJwtPayload = JwtPayload & {
+  sub: Types.ObjectId;
 };

@@ -1,11 +1,11 @@
 import createHttpError from "http-errors";
 import bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import path from "node:path";
 import { readFile } from "node:fs/promises";
 import handlebars from "handlebars";
-import { Types } from "mongoose";
+import {  Types } from "mongoose";
 
 import { getEnvVar } from "../utils/getEnvVar.js";
 import { sendEmail } from "../utils/sendMail.js";
@@ -16,7 +16,7 @@ import {
   accessTokenLifetime,
   TEMPLATES_DIR,
 } from "../constants/index.js";
-import type { AuthPayload, User } from "../types/types.d.ts";
+import type { AuthPayload, ExtendedJwtPayload, User } from "../types/types.d.ts";
 import {
   getFullNameFromGoogleTokenPayload,
   validateCode,
@@ -77,7 +77,7 @@ export const registerUser = async (payload: AuthPayload) => {
 
 export const verify = async (token: string) => {
   try {
-    const { email } = jwt.verify(token, jwtSecret) as any;
+    const { email } = jwt.verify(token, jwtSecret) as JwtPayload;
     const user = await getUser({ email });
     if (!user) {
       throw createHttpError(401, "User not found");
@@ -90,7 +90,6 @@ export const verify = async (token: string) => {
     if (err instanceof Error) {
       throw createHttpError(401, err.message);
     }
-    throw err;
   }
 };
 
@@ -246,10 +245,10 @@ export const resetPassword = async (payload: {
   token: string;
   password: string;
 }) => {
-  let entries: any;
+  let entries: ExtendedJwtPayload;
 
   try {
-    entries = jwt.verify(payload.token, jwtSecret);
+    entries = jwt.verify(payload.token, jwtSecret) as ExtendedJwtPayload;
   } catch (err) {
     if (err instanceof Error) {
       throw createHttpError(401, err.message);
@@ -257,7 +256,10 @@ export const resetPassword = async (payload: {
     throw err;
   }
 
-  const user = await getUser({ email: entries.email, _id: entries.sub });
+  const user = await getUser({
+    email: entries.email,
+    _id: entries.sub,
+  });
   if (!user) {
     throw createHttpError(404, "User not found");
   }

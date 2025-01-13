@@ -13,4 +13,4 @@ parameters:
       type: string
 responses:
   "204":
-    description: "Successfully loged out a user"
+    description: "Successfully log out a user"

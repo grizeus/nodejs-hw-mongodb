@@ -1,8 +1,7 @@
-import { OAuth2Client, TokenPayload } from "google-auth-library";
+import { LoginTicket, OAuth2Client, TokenPayload } from "google-auth-library";
 import path from "node:path";
 import { readFile } from "node:fs/promises";
 import createHttpError from "http-errors";
-import { LoginTicket } from "google-auth-library";
 
 import { getEnvVar } from "./getEnvVar.js";
 
@@ -40,10 +39,9 @@ export const validateCode = async (code: string): Promise<LoginTicket> => {
   const response = await googleOAuthClient.getToken(code);
   if (!response.tokens.id_token) throw createHttpError(401, "Unauthorized");
 
-  const ticket = await googleOAuthClient.verifyIdToken({
+  return await googleOAuthClient.verifyIdToken({
     idToken: response.tokens.id_token,
   });
-  return ticket;
 };
 
 export const getFullNameFromGoogleTokenPayload = (payload: TokenPayload) => {

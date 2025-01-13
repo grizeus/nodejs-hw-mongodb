@@ -20,7 +20,7 @@ const limits = {
 
 const fileFilter = (
   req: Request,
-  file: Express.Multer.File,
+  file: globalThis.Express.Multer.File,
   cb: FileFilterCallback,
 ): void => {
   const ext = file.originalname.split(".").pop();

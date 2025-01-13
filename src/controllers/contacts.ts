@@ -52,7 +52,7 @@ export const getContactsController = async (
   });
 };
 
-const savePhotoHandler = async (photo: Express.Multer.File | undefined) => {
+const savePhotoHandler = async (photo: globalThis.Express.Multer.File | undefined) => {
   let photoUrl;
   if (photo) {
     if (enableCloudinary) {
@@ -131,10 +131,10 @@ export const deleteContactController = async (
   const { contactId: _id } = req.params;
   const userId = req.user._id;
 
-  // delete photo before deleteng from DB
+  // delete photo before deleting from DB
   const { photo } = (await getContactById({ _id, userId })) as Contact;
   if (photo) {
-    deletePhotoHandler(photo);
+    await deletePhotoHandler(photo);
   }
 
   const contact = await deleteContact({ _id, userId });
