@@ -30,10 +30,7 @@ import { Types } from "mongoose";
 
 const enableCloudinary = getEnvVar("ENABLE_CLOUDINARY") === "true";
 
-export const getContactsController = async (
-  req: Request,
-  res: Response,
-) => {
+export const getContactsController = async (req: Request, res: Response) => {
   const request = req as ExpandedRequest;
   const { page, perPage } = parsePaginationParams(request.query);
   const { sortBy, sortOrder } = parseSortParams(request.query, CONTACT_KEYS);
@@ -112,10 +109,7 @@ export const getContactByIdController = async (req: Request, res: Response) => {
   });
 };
 
-export const createContactController = async (
-  req: Request,
-  res: Response,
-) => {
+export const createContactController = async (req: Request, res: Response) => {
   const request = req as ExpandedRequest;
   const userId = request.user._id;
   const photo = request.file;
