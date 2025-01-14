@@ -8,7 +8,9 @@ import {
   requestResetToken,
   resetPassword,
   verify,
+  loginOrSignupWithGoogle,
 } from "../services/auth.js";
+import { generateAuthUrl } from "../utils/googleOAuth2.js";
 import type { Session } from "../types/types.d.ts";
 
 export const registerController = async (req: Request, res: Response) => {
@@ -18,6 +20,20 @@ export const registerController = async (req: Request, res: Response) => {
     status: 201,
     message: "Successfully registered a user",
     data: user,
+  });
+};
+
+export const getGoogleOAuthUrlController = async (
+  req: Request,
+  res: Response,
+) => {
+  const url = generateAuthUrl();
+  res.json({
+    status: 200,
+    message: "Successfully get Google OAuth url!",
+    data: {
+      url,
+    },
   });
 };
 
@@ -47,6 +63,22 @@ export const loginController = async (req: Request, res: Response) => {
   res.json({
     status: 200,
     message: "Successfully logged in an user!",
+    data: {
+      accessToken: session.accessToken,
+    },
+  });
+};
+
+export const loginWithGoogleController = async (
+  req: Request,
+  res: Response,
+) => {
+  const session = await loginOrSignupWithGoogle(req.body.code);
+  setupSession(res, session);
+
+  res.json({
+    status: 200,
+    message: "Successfully logged in via Google OAuth!",
     data: {
       accessToken: session.accessToken,
     },

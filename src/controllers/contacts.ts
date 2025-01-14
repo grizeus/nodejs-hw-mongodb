@@ -1,5 +1,5 @@
 import createHttpError from "http-errors";
-import { Response } from "express";
+import { Request, Response } from "express";
 
 import {
   createContact,
@@ -26,17 +26,19 @@ import type {
   ExpandedRequest,
   Contact,
 } from "../types/types.d.ts";
+import { Types } from "mongoose";
 
 const enableCloudinary = getEnvVar("ENABLE_CLOUDINARY") === "true";
 
 export const getContactsController = async (
-  req: ExpandedRequest,
+  req: Request,
   res: Response,
 ) => {
-  const { page, perPage } = parsePaginationParams(req.query);
-  const { sortBy, sortOrder } = parseSortParams(req.query, CONTACT_KEYS);
-  const filter: FilterParams = parseFilterParams(req.query);
-  filter.userId = req.user._id;
+  const request = req as ExpandedRequest;
+  const { page, perPage } = parsePaginationParams(request.query);
+  const { sortBy, sortOrder } = parseSortParams(request.query, CONTACT_KEYS);
+  const filter: FilterParams = parseFilterParams(request.query);
+  filter.userId = request.user._id;
 
   const contacts = await getAllContacts({
     page,
@@ -52,7 +54,9 @@ export const getContactsController = async (
   });
 };
 
-const savePhotoHandler = async (photo: Express.Multer.File | undefined) => {
+const savePhotoHandler = async (
+  photo: globalThis.Express.Multer.File | undefined,
+) => {
   let photoUrl;
   if (photo) {
     if (enableCloudinary) {
@@ -88,13 +92,14 @@ const deletePhotoHandler = async (photoUrl: string): Promise<void> => {
   }
 };
 
-export const getContactByIdController = async (
-  req: ExpandedRequest,
-  res: Response,
-) => {
-  const { contactId: _id } = req.params;
-  const userId = req.user._id;
-  const contact = await getContactById({ _id, userId });
+export const getContactByIdController = async (req: Request, res: Response) => {
+  const request = req as ExpandedRequest;
+  const { contactId: _id } = request.params;
+  const userId = request.user._id;
+  const contact = await getContactById({
+    _id: new Types.ObjectId(_id),
+    userId,
+  });
 
   if (!contact) {
     throw createHttpError(404, `Contact with id ${_id} not found`);
@@ -108,11 +113,12 @@ export const getContactByIdController = async (
 };
 
 export const createContactController = async (
-  req: ExpandedRequest,
+  req: Request,
   res: Response,
 ) => {
-  const userId = req.user?._id;
-  const photo = req.file;
+  const request = req as ExpandedRequest;
+  const userId = request.user._id;
+  const photo = request.file;
   const photoUrl = await savePhotoHandler(photo);
 
   const contact = await createContact({ userId, ...req.body, photo: photoUrl });
@@ -124,20 +130,21 @@ export const createContactController = async (
   });
 };
 
-export const deleteContactController = async (
-  req: ExpandedRequest,
-  res: Response,
-) => {
-  const { contactId: _id } = req.params;
-  const userId = req.user._id;
+export const deleteContactController = async (req: Request, res: Response) => {
+  const request = req as ExpandedRequest;
+  const { contactId: _id } = request.params;
+  const userId = request.user._id;
 
-  // delete photo before deleteng from DB
-  const { photo } = (await getContactById({ _id, userId })) as Contact;
+  // delete photo before deleting from DB
+  const { photo } = (await getContactById({
+    _id: new Types.ObjectId(_id),
+    userId,
+  })) as Contact;
   if (photo) {
-    deletePhotoHandler(photo);
+    await deletePhotoHandler(photo);
   }
 
-  const contact = await deleteContact({ _id, userId });
+  const contact = await deleteContact({ _id: new Types.ObjectId(_id), userId });
 
   if (!contact) {
     throw createHttpError(404, "Contact not found");
@@ -146,18 +153,16 @@ export const deleteContactController = async (
   res.status(204).send();
 };
 
-export const upsertContactController = async (
-  req: ExpandedRequest,
-  res: Response,
-) => {
-  const { contactId: _id } = req.params;
-  const userId = req.user._id;
+export const upsertContactController = async (req: Request, res: Response) => {
+  const request = req as ExpandedRequest;
+  const { contactId: _id } = request.params;
+  const userId = request.user._id;
   const photo = req.file;
 
   const photoUrl = await savePhotoHandler(photo);
 
   const result = await updateContact(
-    { _id, userId },
+    { _id: new Types.ObjectId(_id), userId },
     { ...req.body, photo: photoUrl },
     {
       upsert: true,
@@ -179,18 +184,16 @@ export const upsertContactController = async (
   });
 };
 
-export const patchContactController = async (
-  req: ExpandedRequest,
-  res: Response,
-) => {
-  const { contactId: _id } = req.params;
-  const userId = req.user._id;
+export const patchContactController = async (req: Request, res: Response) => {
+  const request = req as ExpandedRequest;
+  const { contactId: _id } = request.params;
+  const userId = request.user._id;
   const photo = req.file;
 
   const photoUrl = await savePhotoHandler(photo);
 
   const result = await updateContact(
-    { _id, userId },
+    { _id: new Types.ObjectId(_id), userId },
     { ...req.body, photo: photoUrl },
   );
 

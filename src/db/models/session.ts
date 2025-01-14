@@ -33,8 +33,11 @@ const sessionSchema = new Schema<Session>(
   },
 );
 
+// @ts-expect-error "suppress type inconsistency in method definition"
 sessionSchema.post<Session>("save", handleSaveErr);
+// @ts-expect-error "suppress type inconsistency in method definition"
 sessionSchema.pre<Session>("findOneAndUpdate", setUpdateSettings);
+// @ts-expect-error "suppress type inconsistency in method definition"
 sessionSchema.post<Session>("findOneAndUpdate", handleSaveErr);
 
 export const SessionCollection = model<Session>("session", sessionSchema);

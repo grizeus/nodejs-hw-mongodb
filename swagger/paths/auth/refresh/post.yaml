@@ -5,7 +5,7 @@ operationId: refreshUsersSession
 description: " Refresh a user session"
 security:
   - bearerAuth: []
-parameters: 
+parameters:
   - in: cookie
     name: sessionId
     required: true
@@ -17,7 +17,7 @@ parameters:
     schema:
       description: "Random string in the base64 encoding"
       type: string
-      example: "Ier8Y1B7G3giA1jFzFRbfKrGQPzTjLK7UU6dL91p" 
+      example: "Ier8Y1B7G3giA1jFzFRbfKrGQPzTjLK7UU6dL91p"
 responses:
   "200":
     description: Login a user
@@ -35,7 +35,7 @@ responses:
               example: 200
             message:
               type: string
-              example: Succesfully refreshed a session!
+              example: Successfully refreshed a session!
             data:
               type: object
               required:

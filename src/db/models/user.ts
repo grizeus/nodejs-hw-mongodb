@@ -40,8 +40,11 @@ usersSchema.methods.toJSON = function () {
 
 export const USER_KEYS = Object.keys(usersSchema.paths); // NOTE: leave for now
 
+// @ts-expect-error "suppress type inconsistency in method definition"
 usersSchema.post<User>("save", handleSaveErr);
+// @ts-expect-error "suppress type inconsistency in method definition"
 usersSchema.pre<User>("findOneAndUpdate", setUpdateSettings);
+// @ts-expect-error "suppress type inconsistency in method definition"
 usersSchema.post<User>("findOneAndUpdate", handleSaveErr);
 
 export const UsersCollection = model<User>("user", usersSchema);
