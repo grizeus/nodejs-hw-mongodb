@@ -1,6 +1,6 @@
 import { Document, Query } from "mongoose";
 import { NextFunction } from "express";
-import type { MongoServerError, } from "../../types/types.d.ts";
+import type { MongoServerError } from "../../types/types.d.ts";
 
 export type SaveErrorHandler = (
   error: MongoServerError,
@@ -18,7 +18,10 @@ export const handleSaveErr: SaveErrorHandler = (
   next();
 };
 
-export const setUpdateSettings = function<T extends Document> (this: Query<T, T>, next: NextFunction) {
+export const setUpdateSettings = function <T extends Document>(
+  this: Query<T, T>,
+  next: NextFunction,
+) {
   this.setOptions({
     new: true,
     runValidators: true,

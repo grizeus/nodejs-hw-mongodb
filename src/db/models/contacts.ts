@@ -44,8 +44,11 @@ const contactSchema = new Schema<Contact>(
 
 export const CONTACT_KEYS = Object.keys(contactSchema.paths);
 
+// @ts-expect-error "suppress type inconsistency in method definition"
 contactSchema.post<Contact>("save", handleSaveErr);
+// @ts-expect-error "suppress type inconsistency in method definition"
 contactSchema.pre<Contact>("findOneAndUpdate", setUpdateSettings);
+// @ts-expect-error "suppress type inconsistency in method definition"
 contactSchema.post<Contact>("findOneAndUpdate", handleSaveErr);
 
 export const ContactsCollection = model<Contact>("contact", contactSchema);

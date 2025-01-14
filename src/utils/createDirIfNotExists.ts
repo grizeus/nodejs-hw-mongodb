@@ -10,8 +10,7 @@ const isFileSystemError = (error: unknown): error is FileSystemError => {
   return (
     error !== null &&
     typeof error === "object" &&
-    "code" in error &&
-    typeof (error as FileSystemError).code === "string"
+    "code" in error
   );
 };
 

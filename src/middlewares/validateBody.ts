@@ -9,6 +9,7 @@ export const validateBody = (schema: ObjectSchema) => {
         abortEarly: false,
       });
       next();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       next(
         createHttpError(400, "Bad Request", {

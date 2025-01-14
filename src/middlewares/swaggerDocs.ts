@@ -8,6 +8,7 @@ export const swaggerDocs = () => {
   try {
     const swaggerDoc = JSON.parse(readFileSync(SWAGGER_PATH, "utf-8"));
     return [...swaggerUI.serve, swaggerUI.setup(swaggerDoc)];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   } catch (err) {
     throw createHttpError(500, "Can't load swagger docs");
   }
