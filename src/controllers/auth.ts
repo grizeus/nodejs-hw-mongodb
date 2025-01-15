@@ -48,7 +48,7 @@ export const verifyController = async (req: Request, res: Response) => {
 };
 
 export const loginController = async (req: Request, res: Response) => {
-  const session = await loginUser(req.body);
+  const { name, email, session } = await loginUser(req.body);
 
   res.cookie("refreshToken", session.refreshToken, {
     httpOnly: true,
@@ -63,9 +63,11 @@ export const loginController = async (req: Request, res: Response) => {
   res.json({
     status: 200,
     message: "Successfully logged in an user!",
-    data: {
-      accessToken: session.accessToken,
+    user: {
+      name: name,
+      email: email,
     },
+    accesToken: session.accessToken,
   });
 };
 
@@ -121,9 +123,7 @@ export const refreshUserSessionController = async (
   res.json({
     status: 200,
     message: "Successfully refreshed a session!",
-    data: {
-      accessToken: session.accessToken,
-    },
+    accessToken: session.accessToken,
   });
 };
 

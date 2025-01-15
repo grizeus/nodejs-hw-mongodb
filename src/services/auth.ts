@@ -117,13 +117,19 @@ export const loginUser = async (payload: AuthPayload) => {
   const accessToken = randomBytes(30).toString("base64");
   const refreshToken = randomBytes(30).toString("base64");
 
-  return SessionCollection.create({
+  const session = await SessionCollection.create({
     userId: user._id,
     accessToken,
     refreshToken,
     accessTokenValidUntil: Date.now() + accessTokenLifetime,
     refreshTokenValidUntil: Date.now() + refreshTokenLifetime,
   });
+
+  return {
+    name: user.name,
+    email,
+    session
+  };
 };
 
 export const loginOrSignupWithGoogle = async (code: string) => {
