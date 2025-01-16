@@ -67,7 +67,7 @@ export const loginController = async (req: Request, res: Response) => {
       name: name,
       email: email,
     },
-    accesToken: session.accessToken,
+    accessToken: session.accessToken,
   });
 };
 
