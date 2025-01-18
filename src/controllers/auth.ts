@@ -63,11 +63,13 @@ export const loginController = async (req: Request, res: Response) => {
   res.json({
     status: 200,
     message: "Successfully logged in an user!",
-    user: {
-      name: name,
-      email: email,
+    data: {
+      user: {
+        name: name,
+        email: email,
+      },
+      accessToken: session.accessToken,
     },
-    accessToken: session.accessToken,
   });
 };
 
@@ -123,7 +125,9 @@ export const refreshUserSessionController = async (
   res.json({
     status: 200,
     message: "Successfully refreshed a session!",
-    accessToken: session.accessToken,
+    data: {
+      accessToken: session.accessToken,
+    },
   });
 };
 
