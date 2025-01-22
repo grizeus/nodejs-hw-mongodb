@@ -153,11 +153,14 @@ export const loginOrSignupWithGoogle = async (code: string) => {
   }
 
   const newSession = createSession();
-
-  return await SessionCollection.create({
-    userId: user._id,
-    ...newSession,
-  });
+  return {
+    name: user.name,
+    email: user.email,
+    session: await SessionCollection.create({
+      userId: user._id,
+      ...newSession,
+    }),
+  };
 };
 
 export const logoutUser = async (sessionId: Types.ObjectId) => {
