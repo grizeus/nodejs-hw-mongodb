@@ -15,7 +15,14 @@ const PORT = Number(getEnvVarWithDefault("PORT", "3000"));
 export const setupServer = () => {
   const app = express();
 
-  app.use(cors());
+  const corsOpt = {
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  };
+
+  app.use(cors(corsOpt));
   app.use(cookieParser());
   app.use(
     express.json({

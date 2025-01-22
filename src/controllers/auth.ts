@@ -14,6 +14,7 @@ import { generateAuthUrl } from "../utils/googleOAuth2.js";
 import type { Session } from "../types/types.d.ts";
 
 export const registerController = async (req: Request, res: Response) => {
+  console.log(req.body);
   const user = await registerUser(req.body);
 
   res.status(201).json({
@@ -48,7 +49,7 @@ export const verifyController = async (req: Request, res: Response) => {
 };
 
 export const loginController = async (req: Request, res: Response) => {
-  const session = await loginUser(req.body);
+  const { name, email, session } = await loginUser(req.body);
 
   res.cookie("refreshToken", session.refreshToken, {
     httpOnly: true,
@@ -64,6 +65,10 @@ export const loginController = async (req: Request, res: Response) => {
     status: 200,
     message: "Successfully logged in an user!",
     data: {
+      user: {
+        name: name,
+        email: email,
+      },
       accessToken: session.accessToken,
     },
   });
@@ -73,16 +78,24 @@ export const loginWithGoogleController = async (
   req: Request,
   res: Response,
 ) => {
-  const session = await loginOrSignupWithGoogle(req.body.code);
+  const { name, email, session } = await loginOrSignupWithGoogle(
+    req.query.code as string,
+  );
   setupSession(res, session);
-
-  res.json({
+  const userData = {
     status: 200,
     message: "Successfully logged in via Google OAuth!",
     data: {
+      user: {
+        name: name,
+        email: email,
+      },
       accessToken: session.accessToken,
     },
-  });
+  };
+  const frontendUrl = "http://localhost:5173";
+  const encodedData = encodeURIComponent(JSON.stringify(userData));
+  res.redirect(`${frontendUrl}/oauth-callback?oauthData=${encodedData}`);
 };
 
 export const logoutController = async (req: Request, res: Response) => {

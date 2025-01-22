@@ -24,23 +24,24 @@ const oauthConfig: GoogleOAuthConfig = JSON.parse(
 const googleOAuthClient = new OAuth2Client({
   clientId: getEnvVar("GOOGLE_AUTH_CLIENT_ID"),
   clientSecret: getEnvVar("GOOGLE_AUTH_CLIENT_SECRET"),
-  redirectUri: oauthConfig.web.redirect_uris[1],
+  redirectUri: oauthConfig.web.redirect_uris[0],
 });
 
 export const generateAuthUrl = (): string =>
   googleOAuthClient.generateAuthUrl({
     scope: [
       "https://www.googleapis.com/auth/userinfo.email",
-      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.profile openid",
     ],
+    prompt: "consent",
   });
 
 export const validateCode = async (code: string): Promise<LoginTicket> => {
-  const response = await googleOAuthClient.getToken(code);
-  if (!response.tokens.id_token) throw createHttpError(401, "Unauthorized");
+  const { tokens } = await googleOAuthClient.getToken(code);
+  if (!tokens.id_token) throw createHttpError(401, "Unauthorized");
 
   return await googleOAuthClient.verifyIdToken({
-    idToken: response.tokens.id_token,
+    idToken: tokens.id_token,
   });
 };
 
