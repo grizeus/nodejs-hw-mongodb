@@ -14,7 +14,6 @@ import { generateAuthUrl } from "../utils/googleOAuth2.js";
 import type { Session } from "../types/types.d.ts";
 
 export const registerController = async (req: Request, res: Response) => {
-  console.log(req.body);
   const user = await registerUser(req.body);
 
   res.status(201).json({
@@ -125,10 +124,7 @@ export const refreshUserSessionController = async (
   req: Request,
   res: Response,
 ) => {
-  const session: Session = await refreshUsersSession({
-    sessionId: req.cookies.sessionId,
-    refreshToken: req.cookies.refreshToken,
-  });
+  const session: Session = await refreshUsersSession(req.cookies.sessionId);
   setupSession(res, session);
 
   res.json({

@@ -5,7 +5,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import path from "node:path";
 import { readFile } from "node:fs/promises";
 import handlebars from "handlebars";
-import {  Types } from "mongoose";
+import { Types } from "mongoose";
 
 import { getEnvVar } from "../utils/getEnvVar.js";
 import { sendEmail } from "../utils/sendMail.js";
@@ -16,7 +16,11 @@ import {
   accessTokenLifetime,
   TEMPLATES_DIR,
 } from "../constants/index.js";
-import type { AuthPayload, ExtendedJwtPayload, User } from "../types/types.d.ts";
+import type {
+  AuthPayload,
+  ExtendedJwtPayload,
+  User,
+} from "../types/types.d.ts";
 import {
   getFullNameFromGoogleTokenPayload,
   validateCode,
@@ -128,7 +132,7 @@ export const loginUser = async (payload: AuthPayload) => {
   return {
     name: user.name,
     email,
-    session
+    session,
   };
 };
 
@@ -179,17 +183,12 @@ const createSession = () => {
   };
 };
 
-export const refreshUsersSession = async ({
-  sessionId,
-  refreshToken,
-}: {
-  sessionId: Types.ObjectId;
-  refreshToken: string;
-}) => {
+export const refreshUsersSession = async (sessionId: Types.ObjectId) => {
   const oldSession = await SessionCollection.findOne({
     _id: sessionId,
-    refreshToken,
   });
+
+  console.log(`oldSession ${oldSession}`);
 
   if (!oldSession) {
     throw createHttpError(401, "Session not found");
@@ -206,7 +205,6 @@ export const refreshUsersSession = async ({
 
   await SessionCollection.deleteOne({
     _id: sessionId,
-    refreshToken,
   });
 
   return await SessionCollection.create({
