@@ -59,14 +59,14 @@ export const registerUser = async (payload: AuthPayload) => {
       },
       jwtSecret,
       {
-        expiresIn: "1h",
+        expiresIn: "2h",
       },
     );
 
     const template = handlebars.compile(verifyTemplateSource);
     const html = template({
       name: newUser.name,
-      link: `${appDomain}/auth/verify?verifyToken=${verifyToken}`,
+      link: `${appDomain}/verify?verifyToken=${verifyToken}`,
     });
 
     await sendEmail({
@@ -238,7 +238,7 @@ export const requestResetToken = async (email: string) => {
   const template = handlebars.compile(resetTemplateSource);
   const html = template({
     name: user.name,
-    link: `${appDomain}/auth/reset-password?token=${resetToken}`,
+    link: `${appDomain}/reset-password?token=${resetToken}`,
   });
 
   await sendEmail({
